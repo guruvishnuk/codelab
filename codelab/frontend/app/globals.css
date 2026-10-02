@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-paper text-ink font-sans antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid #0F766E;
+  outline-offset: 2px;
+}
+
+/* Lesson notes: tuned for reading */
+.notes {
+  @apply prose prose-slate max-w-[68ch];
+}
+.notes pre {
+  @apply bg-ink text-slate-100 rounded-md text-sm;
+}
+.notes code::before,
+.notes code::after {
+  content: none;
+}
+.notes :not(pre) > code {
+  @apply bg-brand-soft text-brand-dark px-1 py-0.5 rounded text-[0.9em];
+}
