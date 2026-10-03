@@ -1,12 +1,12 @@
 # Web framework + server
-fastapi==0.115.0
-uvicorn[standard]==0.30.6
+fastapi>=0.115
+uvicorn>=0.30
 
 # Database (SQLite for dev; switch DATABASE_URL to Postgres later)
-sqlalchemy==2.0.35
-alembic==1.13.3
-# psycopg2-binary==2.9.9   # uncomment when moving to PostgreSQL
+sqlalchemy>=2.0.43
+alembic>=1.13
+# psycopg[binary]   # uncomment when moving to PostgreSQL
 
 # Validation + config
-pydantic==2.9.2
-python-dotenv==1.0.1
+pydantic>=2.12
+python-dotenv>=1.0
