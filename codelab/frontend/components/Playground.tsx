@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { runCode, type RunResponse } from "@/lib/api";
 
+import CodeMirror from "@uiw/react-codemirror";
+import { python } from "@codemirror/lang-python";
+
 export default function Playground({
   exerciseId,
   starterCode,
@@ -27,30 +30,22 @@ export default function Playground({
     }
   }
 
-  // Tab inserts 4 spaces instead of leaving the editor
-  function onKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (e.key !== "Tab") return;
-    e.preventDefault();
-    const el = e.currentTarget;
-    const { selectionStart: s, selectionEnd: end } = el;
-    const next = code.slice(0, s) + "    " + code.slice(end);
-    setCode(next);
-    requestAnimationFrame(() => (el.selectionStart = el.selectionEnd = s + 4));
-  }
-
   return (
     <section aria-label="Code editor">
       <label htmlFor="code" className="sr-only">
         Your Python code
       </label>
-      <textarea
-        id="code"
-        value={code}
-        onChange={(e) => setCode(e.target.value)}
-        onKeyDown={onKeyDown}
-        spellCheck={false}
-        className="h-72 w-full resize-y rounded-md border border-line bg-ink p-4 font-mono text-sm leading-relaxed text-slate-100"
-      />
+      
+      <div className="overflow-hidden rounded-md border border-line">
+        <CodeMirror
+          value={code}
+          height="300px"
+          theme="dark"
+          extensions={[python()]}
+          onChange={(value) => setCode(value)}
+          className="text-sm"
+        />
+      </div>
 
       <div className="mt-3 flex items-center gap-3">
         <button
