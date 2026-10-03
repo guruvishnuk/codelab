@@ -10,3 +10,6 @@ alembic>=1.13
 # Validation + config
 pydantic>=2.12
 python-dotenv>=1.0
+
+# JWT for Authentication
+PyJWT>=2.8.0

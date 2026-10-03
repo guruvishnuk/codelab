@@ -35,12 +35,27 @@ class Exercise(Base):
     topic: Mapped[Topic] = relationship(back_populates="exercises")
 
 
+class User(Base):
+    __tablename__ = "users"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
+    name: Mapped[str] = mapped_column(String(255))
+    avatar_url: Mapped[str] = mapped_column(String(1024), default="")
+    provider: Mapped[str] = mapped_column(String(50))  # e.g., 'google' or 'github'
+
+    submissions: Mapped[list["Submission"]] = relationship(back_populates="user")
+
+
 class Submission(Base):
-    """Stored for every run. Add user_id here once auth exists."""
+    """Stored for every run, now tied to a specific user."""
     __tablename__ = "submissions"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     exercise_id: Mapped[int] = mapped_column(ForeignKey("exercises.id"))
     code: Mapped[str] = mapped_column(Text)
     passed: Mapped[bool] = mapped_column(default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    user: Mapped[User] = relationship(back_populates="submissions")

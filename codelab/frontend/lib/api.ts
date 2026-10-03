@@ -1,4 +1,22 @@
+import { cookies } from "next/headers";
+
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+
+// Helper to get the JWT token from the NextAuth cookies
+function getAuthHeaders() {
+  const cookieStore = cookies();
+  // Auth.js names the cookie differently depending on if it's localhost or HTTPS (production)
+  const token = cookieStore.get("authjs.session-token")?.value || cookieStore.get("__Secure-authjs.session-token")?.value;
+  
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json"
+  };
+  
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  return headers;
+}
 
 export type TopicSummary = { slug: string; title: string; summary: string };
 export type ExerciseSummary = { id: number; title: string; difficulty: string; solved: boolean };
@@ -22,7 +40,10 @@ export type TestResult = {
 export type RunResponse = { passed: boolean; results: TestResult[] };
 
 async function get<T>(path: string): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, { cache: "no-store" });
+  const res = await fetch(`${BASE}${path}`, { 
+    cache: "no-store",
+    headers: getAuthHeaders()
+  });
   if (!res.ok) throw new Error(`Request failed: ${res.status}`);
   return res.json();
 }
@@ -34,9 +55,9 @@ export const getExercise = (id: string) => get<ExerciseDetail>(`/api/exercises/$
 export async function runCode(id: number, code: string): Promise<RunResponse> {
   const res = await fetch(`${BASE}/api/exercises/${id}/run`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: getAuthHeaders(),
     body: JSON.stringify({ code }),
   });
-  if (!res.ok) throw new Error("Could not run your code. Is the API running?");
+  if (!res.ok) throw new Error("Could not run your code. Are you logged in?");
   return res.json();
 }

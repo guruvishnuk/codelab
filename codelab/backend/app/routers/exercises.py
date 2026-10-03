@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from ..database import get_db
-from ..models import Exercise, Submission
+from ..models import Exercise, Submission, User
 from ..schemas import ExerciseDetail, RunRequest, RunResponse, TestResult
 from ..runner import run_python
+from ..auth import get_current_user
 
 router = APIRouter(prefix="/api/exercises", tags=["exercises"])
 
@@ -34,7 +35,12 @@ def _next_exercise_id(db: Session, current: Exercise) -> int | None:
 
 
 @router.post("/{exercise_id}/run", response_model=RunResponse)
-def run_exercise(exercise_id: int, body: RunRequest, db: Session = Depends(get_db)):
+def run_exercise(
+    exercise_id: int, 
+    body: RunRequest, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     ex = db.get(Exercise, exercise_id)
     if not ex:
         raise HTTPException(404, "Exercise not found")
@@ -49,6 +55,13 @@ def run_exercise(exercise_id: int, body: RunRequest, db: Session = Depends(get_d
         ))
 
     all_passed = all(r.passed for r in results)
-    db.add(Submission(exercise_id=ex.id, code=body.code, passed=all_passed))
+    
+    # Save the submission tied to the logged-in user!
+    db.add(Submission(
+        exercise_id=ex.id, 
+        user_id=current_user.id, 
+        code=body.code, 
+        passed=all_passed
+    ))
     db.commit()
     return RunResponse(passed=all_passed, results=results)
