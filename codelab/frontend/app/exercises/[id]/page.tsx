@@ -21,6 +21,24 @@ export default async function ExercisePage({ params }: { params: { id: string } 
         </div>
         <Playground exerciseId={ex.id} starterCode={ex.starter_code} />
       </div>
+
+      <div className="mt-8">
+        {ex.next_exercise_id ? (
+          <Link
+            href={`/exercises/${ex.next_exercise_id}`}
+            className="inline-block rounded-md bg-brand px-5 py-2 font-medium text-white hover:bg-brand-dark"
+          >
+            Next exercise →
+          </Link>
+        ) : (
+          <Link
+            href={`/topics/${ex.topic_slug}`}
+            className="inline-block rounded-md border border-line px-5 py-2 text-sm font-medium hover:bg-brand-soft"
+          >
+            ← Back to topic notes
+          </Link>
+        )}
+      </div>
     </div>
   );
 }

@@ -12,6 +12,7 @@ class ExerciseDetail(ExerciseSummary):
     prompt_md: str
     starter_code: str
     topic_slug: str
+    next_exercise_id: int | None = None
 
 
 class TopicSummary(BaseModel):

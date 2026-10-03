@@ -17,7 +17,20 @@ def get_exercise(exercise_id: int, db: Session = Depends(get_db)):
         id=ex.id, title=ex.title, difficulty=ex.difficulty,
         prompt_md=ex.prompt_md, starter_code=ex.starter_code,
         topic_slug=ex.topic.slug,
+        next_exercise_id=_next_exercise_id(db, ex),
     )
+
+
+def _next_exercise_id(db: Session, current: Exercise) -> int | None:
+    """Return the id of the next exercise in the same topic, or None."""
+    next_ex = (
+        db.query(Exercise)
+        .filter(Exercise.topic_id == current.topic_id,
+                Exercise.position > current.position)
+        .order_by(Exercise.position)
+        .first()
+    )
+    return next_ex.id if next_ex else None
 
 
 @router.post("/{exercise_id}/run", response_model=RunResponse)

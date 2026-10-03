@@ -10,6 +10,7 @@ export type ExerciseDetail = ExerciseSummary & {
   prompt_md: string;
   starter_code: string;
   topic_slug: string;
+  next_exercise_id: number | null;
 };
 export type TestResult = {
   passed: boolean;
