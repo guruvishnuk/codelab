@@ -44,12 +44,12 @@ async function AuthWidget() {
   if (session?.user) {
     return (
       <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2 overflow-hidden">
+        <Link href="/profile" className="flex items-center gap-2 overflow-hidden hover:opacity-80">
           {session.user.image && (
             <img src={session.user.image} alt="Avatar" className="h-8 w-8 rounded-full" />
           )}
           <span className="truncate text-sm font-medium">{session.user.name}</span>
-        </div>
+        </Link>
         <form
           action={async () => {
             "use server";

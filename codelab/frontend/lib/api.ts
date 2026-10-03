@@ -61,3 +61,22 @@ export async function runCode(id: number, code: string): Promise<RunResponse> {
   if (!res.ok) throw new Error("Could not run your code. Are you logged in?");
   return res.json();
 }
+
+export type DashboardExercise = {
+  id: number;
+  title: string;
+  topic_slug: string;
+  difficulty: string;
+};
+
+export type DashboardStats = {
+  total_exercises: number;
+  solved_exercises: number;
+};
+
+export type DashboardResponse = {
+  stats: DashboardStats;
+  recent_solved: DashboardExercise[];
+};
+
+export const getDashboard = () => get<DashboardResponse>("/api/users/me/dashboard");

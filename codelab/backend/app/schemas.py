@@ -43,3 +43,18 @@ class TestResult(BaseModel):
 class RunResponse(BaseModel):
     passed: bool
     results: list[TestResult]
+
+
+class DashboardExercise(BaseModel):
+    id: int
+    title: str
+    topic_slug: str
+    difficulty: str
+
+class DashboardStats(BaseModel):
+    total_exercises: int
+    solved_exercises: int
+
+class DashboardResponse(BaseModel):
+    stats: DashboardStats
+    recent_solved: list[DashboardExercise]
