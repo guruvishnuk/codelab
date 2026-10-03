@@ -51,6 +51,44 @@ print(total)  # 15
 ```
 """
 
+STRINGS_NOTES = """
+## Indexing and slicing
+
+A string is a sequence of characters. Use square brackets to access individual
+characters or slices:
+
+```python
+word = "hello"
+print(word[0])    # h
+print(word[-1])   # o
+print(word[1:4])  # ell
+print(word[::-1]) # olleh  (reversed)
+```
+
+## Useful string methods
+
+`len(s)` returns the number of characters. `.lower()` converts to lowercase,
+which is handy for case-insensitive comparisons:
+
+```python
+s = "Hello"
+print(len(s))       # 5
+print(s.lower())    # hello
+```
+
+## Checking characters
+
+Loop through a string and test each character:
+
+```python
+vowels = "aeiou"
+count = 0
+for ch in "apple":
+    if ch.lower() in vowels:
+        count += 1
+print(count)  # 2
+```
+"""
 
 def seed(db: Session) -> None:
     if db.query(Topic).count() > 0:
@@ -96,5 +134,36 @@ def seed(db: Session) -> None:
             ),
         ],
     )
-    db.add_all([basics, flow])
+    strings = Topic(
+        slug="strings", title="Strings", position=3,
+        summary="Slicing, reversing and checking characters.",
+        notes_md=STRINGS_NOTES,
+        exercises=[
+            Exercise(
+                title="Reverse a string", difficulty="easy", position=1,
+                prompt_md="Read a string and print it reversed.",
+                starter_code="s = input()\n# print s reversed\n",
+                test_cases=[
+                    {"input": "hello\n", "expected": "olleh"},
+                    {"input": "Python\n", "expected": "nohtyP"},
+                    {"input": "\n", "expected": ""},  # edge case: empty string
+                ],
+            ),
+            Exercise(
+                title="Count vowels", difficulty="easy", position=2,
+                prompt_md=(
+                    "Read a string and print how many vowels "
+                    "(a, e, i, o, u) it contains. Count both uppercase "
+                    "and lowercase."
+                ),
+                starter_code="s = input()\n# count and print vowels\n",
+                test_cases=[
+                    {"input": "hello\n", "expected": "2"},
+                    {"input": "APPLE\n", "expected": "2"},   # edge case: uppercase
+                    {"input": "xyz\n", "expected": "0"},
+                ],
+            ),
+        ],
+    )
+    db.add_all([basics, flow, strings])
     db.commit()
