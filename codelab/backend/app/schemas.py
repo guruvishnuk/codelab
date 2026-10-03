@@ -6,6 +6,7 @@ class ExerciseSummary(BaseModel):
     id: int
     title: str
     difficulty: str
+    solved: bool = False
 
 
 class ExerciseDetail(ExerciseSummary):

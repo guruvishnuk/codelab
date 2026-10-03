@@ -1,7 +1,7 @@
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 export type TopicSummary = { slug: string; title: string; summary: string };
-export type ExerciseSummary = { id: number; title: string; difficulty: string };
+export type ExerciseSummary = { id: number; title: string; difficulty: string; solved: boolean };
 export type TopicDetail = TopicSummary & {
   notes_md: string;
   exercises: ExerciseSummary[];

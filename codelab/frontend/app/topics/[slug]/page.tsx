@@ -24,7 +24,14 @@ export default async function TopicPage({ params }: { params: { slug: string } }
               href={`/exercises/${ex.id}`}
               className="flex items-center justify-between py-4 hover:text-brand"
             >
-              <span className="font-medium">{ex.title}</span>
+              <span className="font-medium">
+                {ex.title}
+                {ex.solved && (
+                  <span className="ml-3 rounded bg-ok/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-ok">
+                    Solved
+                  </span>
+                )}
+              </span>
               <span className="rounded-full bg-brand-soft px-3 py-1 text-xs font-medium text-brand-dark">
                 {ex.difficulty}
               </span>
