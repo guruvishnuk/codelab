@@ -12,6 +12,8 @@ export const metadata: Metadata = {
   description: "Learn to code topic by topic. Read the notes, then solve exercises.",
 };
 
+import AuthWidget from "@/components/AuthWidget";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${sans.variable} ${mono.variable}`}>
@@ -25,7 +27,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
             <Sidebar />
           </aside>
-          <main className="px-5 py-8 md:px-10">{children}</main>
+          <div className="flex flex-col bg-slate-50/50">
+            <header className="flex h-16 items-center justify-end border-b border-line bg-white px-5 md:px-10">
+              <AuthWidget />
+            </header>
+            <main className="flex-1 px-5 py-8 md:px-10">{children}</main>
+          </div>
         </div>
       </body>
     </html>
