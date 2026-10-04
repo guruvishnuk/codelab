@@ -1,4 +1,5 @@
 import os
+from .routers import exercises, topics, users, admin  # <-- add admin here
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -28,6 +29,7 @@ app.add_middleware(
 app.include_router(topics.router)
 app.include_router(exercises.router)
 app.include_router(users.router)
+app.include_router(admin.router)
 
 
 @app.get("/api/health")
