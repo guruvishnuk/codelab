@@ -32,6 +32,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <AuthWidget />
             </header>
             <main className="flex-1 px-5 py-8 md:px-10">{children}</main>
+            <footer className="border-t border-line py-6 text-center text-sm text-muted">
+              Built with Next.js and FastAPI
+            </footer>
           </div>
         </div>
       </body>
