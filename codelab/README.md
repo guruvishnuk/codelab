@@ -50,8 +50,12 @@ Open http://localhost:3000. API docs: http://localhost:8000/docs
 2. **Phase 2**: Monaco editor, hints, "next exercise" button, more topics
 3. **Phase 3**: Auth (accounts), saved progress, submission history
 4. **Phase 4**: Safe sandbox (Docker or Judge0), support JavaScript and other languages
-5. **Phase 5**: Admin page to add topics/exercises, deployment (Vercel + Render/Fly + Postgres). **Search added!**
+5. **Phase 5**: Admin page to add topics/exercises, deployment (Vercel + Render/Fly + Postgres). **Done!**
+
+## Deployment
+- **Frontend (Vercel)**: Import the `frontend` folder into Vercel. Add `NEXT_PUBLIC_API_URL` to your Vercel env pointing to your backend.
+- **Backend (Render / Fly.io)**: Use the provided `backend/Dockerfile`. Add `DATABASE_URL` pointing to your Postgres instance, and set `FRONTEND_ORIGIN` to your Vercel URL to allow CORS.
 
 ## Known limits of v1
-- Code runs on the API server with only a timeout. Do not expose publicly until Phase 4.
-- No login, so no per-user progress yet.
+- Code runs on the API server with only a timeout. Do not expose publicly until Phase 4 (Docker Sandbox implemented).
+- No login, so no per-user progress yet (Auth.js implemented).

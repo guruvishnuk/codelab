@@ -5,7 +5,7 @@ uvicorn>=0.30
 # Database (SQLite for dev; switch DATABASE_URL to Postgres later)
 sqlalchemy>=2.0.43
 alembic>=1.13
-# psycopg[binary]   # uncomment when moving to PostgreSQL
+psycopg2-binary>=2.9.9   # Postgres driver for deployment
 
 # Validation + config
 pydantic>=2.12
