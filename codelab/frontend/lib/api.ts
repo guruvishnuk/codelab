@@ -80,3 +80,10 @@ export type DashboardResponse = {
 };
 
 export const getDashboard = () => get<DashboardResponse>("/api/users/me/dashboard");
+
+export type SearchResult = {
+  topics: TopicSummary[];
+  exercises: (ExerciseSummary & { topic_slug: string })[];
+};
+
+export const searchEntities = (q: string) => get<SearchResult>(`/api/search?q=${encodeURIComponent(q)}`);

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getTopics } from "@/lib/api";
+import SearchInput from "./SearchInput";
 
 export default async function Sidebar() {
   let topics: Awaited<ReturnType<typeof getTopics>> = [];
@@ -10,8 +11,10 @@ export default async function Sidebar() {
   }
 
   return (
-    <nav className="px-3 pb-4" aria-label="Topics">
-      <ul className="space-y-1">
+    <>
+      <SearchInput />
+      <nav className="px-3 pb-4" aria-label="Topics">
+        <ul className="space-y-1">
         {topics.map((t) => (
           <li key={t.slug}>
             <Link
@@ -22,7 +25,8 @@ export default async function Sidebar() {
             </Link>
           </li>
         ))}
-      </ul>
-    </nav>
+        </ul>
+      </nav>
+    </>
   );
 }

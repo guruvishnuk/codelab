@@ -50,7 +50,7 @@ Open http://localhost:3000. API docs: http://localhost:8000/docs
 2. **Phase 2**: Monaco editor, hints, "next exercise" button, more topics
 3. **Phase 3**: Auth (accounts), saved progress, submission history
 4. **Phase 4**: Safe sandbox (Docker or Judge0), support JavaScript and other languages
-5. **Phase 5**: Admin page to add topics/exercises, search, deployment (Vercel + Render/Fly + Postgres)
+5. **Phase 5**: Admin page to add topics/exercises, deployment (Vercel + Render/Fly + Postgres). **Search added!**
 
 ## Known limits of v1
 - Code runs on the API server with only a timeout. Do not expose publicly until Phase 4.
