@@ -32,8 +32,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <AuthWidget />
             </header>
             <main className="flex-1 px-5 py-8 md:px-10">{children}</main>
-            <footer className="border-t border-line py-6 text-center text-sm text-muted">
-              Built with Next.js and FastAPI
+            <footer className="border-t border-line py-6 px-5 md:px-10 text-center text-sm text-muted flex flex-col sm:flex-row items-center justify-between gap-4">
+              <span>Built with Next.js and FastAPI</span>
+              <div className="flex items-center gap-6 text-xs">
+                <Link href="/about" className="hover:text-brand hover:underline">
+                  About CodeLab
+                </Link>
+                <Link href="/" className="hover:text-brand hover:underline">
+                  All Topics
+                </Link>
+              </div>
             </footer>
           </div>
         </div>

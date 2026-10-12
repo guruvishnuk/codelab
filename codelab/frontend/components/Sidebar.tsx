@@ -14,6 +14,9 @@ export default async function Sidebar() {
     <>
       <SearchInput />
       <nav className="px-3 pb-4" aria-label="Topics">
+        <div className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted">
+          Topics
+        </div>
         <ul className="space-y-1">
         {topics.map((t) => (
           <li key={t.slug}>
@@ -26,6 +29,22 @@ export default async function Sidebar() {
           </li>
         ))}
         </ul>
+
+        <div className="mt-6 border-t border-line pt-4">
+          <div className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted">
+            Platform
+          </div>
+          <ul className="space-y-1">
+            <li>
+              <Link
+                href="/about"
+                className="block rounded-md px-3 py-2 text-sm font-medium text-ink hover:bg-brand-soft"
+              >
+                About CodeLab
+              </Link>
+            </li>
+          </ul>
+        </div>
       </nav>
     </>
   );
