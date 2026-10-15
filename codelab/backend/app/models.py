@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import ForeignKey, JSON, Text, String, DateTime
+from sqlalchemy import ForeignKey, JSON, Text, String, DateTime, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .database import Base
 
@@ -43,6 +43,7 @@ class User(Base):
     name: Mapped[str] = mapped_column(String(255))
     avatar_url: Mapped[str] = mapped_column(String(1024), default="")
     provider: Mapped[str] = mapped_column(String(50))  # e.g., 'google' or 'github'
+    is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 
     submissions: Mapped[list["Submission"]] = relationship(back_populates="user")
 

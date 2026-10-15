@@ -15,8 +15,9 @@ export async function createExerciseAction(topicId: number, data: any) {
   const cookieStore = cookies();
   const token = cookieStore.get("authjs.session-token")?.value || cookieStore.get("__Secure-authjs.session-token")?.value;
   
+  const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
   // Call the secure Admin endpoint
-  const res = await fetch(`http://localhost:8000/api/admin/topics/${topicId}/exercises`, {
+  const res = await fetch(`${BASE}/api/admin/topics/${topicId}/exercises`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -80,6 +80,24 @@ export default function AboutPage() {
     {
       name: "Functions & Scope",
       desc: "Modular code, return values, parameters, and variable lifetimes.",
+      status: "Available",
+      href: "/topics/functions-and-scope",
+    },
+    {
+      name: "Lists & Tuples",
+      desc: "Ordered sequences, indexing, list comprehensions, and immutable records.",
+      status: "Available",
+      href: "/topics/lists-and-tuples",
+    },
+    {
+      name: "Dictionaries & Sets",
+      desc: "Key-value mappings, hash lookups, set operations, and frequency counters.",
+      status: "Available",
+      href: "/topics/dictionaries-and-sets",
+    },
+    {
+      name: "Object-Oriented Python",
+      desc: "Classes, instances, attributes, methods, and encapsulation.",
       status: "In Development",
     },
   ];

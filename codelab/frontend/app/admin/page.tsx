@@ -50,6 +50,9 @@ export default function AdminPage() {
             <option value="1">Python Basics</option>
             <option value="2">Control Flow</option>
             <option value="3">Strings</option>
+            <option value="4">Functions & Scope</option>
+            <option value="5">Lists & Tuples</option>
+            <option value="6">Dictionaries & Sets</option>
           </select>
         </div>
 

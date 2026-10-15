@@ -5,7 +5,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .database import Base, engine, SessionLocal
-from .routers import topics, exercises, users
 from .seed import seed
 
 
