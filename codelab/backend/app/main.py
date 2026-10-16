@@ -18,9 +18,13 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="CodeLab API", lifespan=lifespan)
 
+frontend_origins_raw = os.getenv("FRONTEND_ORIGIN", "http://localhost:3000,https://codelab-amber.vercel.app")
+allow_origins = [o.strip() for o in frontend_origins_raw.split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[os.getenv("FRONTEND_ORIGIN", "http://localhost:3000")],
+    allow_origins=allow_origins if "*" not in allow_origins else ["*"],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
