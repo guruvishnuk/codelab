@@ -16,17 +16,17 @@ function getErrorMessage(error?: string) {
   switch (error) {
     case "OAuthSignin":
     case "OAuthCallback":
-      return "Could not connect to the authentication provider. Please try again.";
+      return "Could not connect to provider. Please try again.";
     case "OAuthAccountNotLinked":
-      return "An account with this email already exists with another provider. Please sign in with the original provider you used.";
+      return "An account with this email already exists with another provider.";
     case "AccessDenied":
-      return "Sign-in was cancelled or access was denied. You can try again whenever you're ready.";
+      return "Sign-in was cancelled. You can try again whenever ready.";
     case "Callback":
-      return "Authentication session callback error. Please retry.";
+      return "Session callback error. Please retry.";
     case "Configuration":
-      return "Authentication service configuration issue. Please try again in a few moments.";
+      return "Authentication setup issue. Please try again shortly.";
     default:
-      return "An unexpected sign-in error occurred. Please try again.";
+      return "An unexpected error occurred. Please try again.";
   }
 }
 
@@ -36,35 +36,33 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   const errorMessage = getErrorMessage(searchParams?.error);
 
   return (
-    <div className="home3d">
+    <div className="home3d auth-page">
       <SceneLazy />
 
-      {/* Header Bar */}
-      <div className="wrap">
-        <nav>
-          <Link className="logo" href="/">
-            <i>&lt;/&gt;</i>CodeLab
+      {/* Top Header */}
+      <header className="auth-nav-wrap">
+        <Link className="logo" href="/">
+          <i>&lt;/&gt;</i>CodeLab
+        </Link>
+        <div className="r">
+          <Link className="btn hide" href="/topics/python-basics">
+            Browse tracks
           </Link>
-          <div className="r">
-            <Link className="btn hide" href="/topics/python-basics">
-              Browse tracks
-            </Link>
-            <ThemeToggle />
-            <Link className="btn" href="/">
-              ← Home
-            </Link>
-          </div>
-        </nav>
-      </div>
+          <ThemeToggle />
+          <Link className="btn" href="/">
+            ← Home
+          </Link>
+        </div>
+      </header>
 
-      {/* Main Auth Container */}
+      {/* Centered Auth Card Shell */}
       <main className="auth-shell">
         <div className="aur" />
         <div className="grid" />
 
         <div className="auth-card">
           {session?.user ? (
-            /* Already logged in state */
+            /* Active Session State */
             <div className="auth-user-box">
               <div className="auth-avatar-shell">
                 {session.user.image ? (
@@ -79,7 +77,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
                     style={{
                       display: "grid",
                       placeItems: "center",
-                      fontSize: "32px",
+                      fontSize: "26px",
                       background: "var(--v)",
                       color: "#fff",
                     }}
@@ -97,15 +95,15 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
                 {session.user.email}
               </div>
 
-              <p className="auth-sub" style={{ margin: "0 0 24px" }}>
-                You are currently signed in. Ready to continue your coding journey?
+              <p className="auth-sub" style={{ margin: "0 0 16px" }}>
+                You are currently signed in. Ready to continue coding?
               </p>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "12px", width: "100%" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%" }}>
                 <Link
                   href={callbackUrl}
                   className="btn p"
-                  style={{ width: "100%", justifyContent: "center" }}
+                  style={{ width: "100%", justifyContent: "center", padding: "11px 18px" }}
                 >
                   Continue Learning →
                 </Link>
@@ -120,7 +118,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
                   <button
                     type="submit"
                     className="btn"
-                    style={{ width: "100%", justifyContent: "center" }}
+                    style={{ width: "100%", justifyContent: "center", padding: "10px 18px", fontSize: "13.5px" }}
                   >
                     Sign out
                   </button>
@@ -128,7 +126,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
               </div>
             </div>
           ) : (
-            /* Sign in options */
+            /* Sign in Providers */
             <>
               <div className="auth-badge">
                 <span>⚡ Instant Cloud Sync & Progress</span>
@@ -136,16 +134,13 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
               <h1 className="auth-title">Welcome to CodeLab</h1>
               <p className="auth-sub">
-                Sign in to sync your practice, maintain your daily streak, and unlock verified milestones.
+                Sign in to save your code, maintain streaks, and unlock coding badges.
               </p>
 
               {errorMessage && (
                 <div className="auth-error">
-                  <span style={{ fontSize: "16px", lineHeight: "1" }}>⚠️</span>
-                  <div>
-                    <strong style={{ display: "block", marginBottom: "2px" }}>Sign-in notice</strong>
-                    <span>{errorMessage}</span>
-                  </div>
+                  <span style={{ fontSize: "14px", lineHeight: "1" }}>⚠️</span>
+                  <div>{errorMessage}</div>
                 </div>
               )}
 
@@ -158,7 +153,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
                   }}
                 >
                   <button type="submit" className="auth-btn google">
-                    <svg width="20" height="20" viewBox="0 0 24 24">
+                    <svg width="18" height="18" viewBox="0 0 24 24">
                       <path
                         fill="#4285F4"
                         d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -188,7 +183,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
                   }}
                 >
                   <button type="submit" className="auth-btn github">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                       <path
                         fillRule="evenodd"
                         clipRule="evenodd"
@@ -201,39 +196,45 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
               </div>
 
               <div className="auth-divider">
-                <span>What you unlock</span>
+                <span>Account benefits</span>
               </div>
 
-              <div className="auth-perks">
-                <div className="auth-perk">
-                  <span className="auth-perk-icon">🔄</span>
-                  <span><b>Cloud Synced Editor:</b> Code is auto-saved and synced across your devices.</span>
+              <div className="auth-perk-row">
+                <div className="auth-perk-item">
+                  <span>🔄</span>
+                  <span>Auto-Sync</span>
                 </div>
-                <div className="auth-perk">
-                  <span className="auth-perk-icon">🔥</span>
-                  <span><b>Streaks & Ranks:</b> Maintain daily habits and climb from Apprentice to Master.</span>
+                <div className="auth-perk-item">
+                  <span>🔥</span>
+                  <span>Streaks</span>
                 </div>
-                <div className="auth-perk">
-                  <span className="auth-perk-icon">🏆</span>
-                  <span><b>Badges & Milestones:</b> Showcase verified test passes on your public profile.</span>
+                <div className="auth-perk-item">
+                  <span>🏆</span>
+                  <span>XP Ranks</span>
                 </div>
               </div>
 
-              <div className="auth-footer">
+              <div className="auth-card-footer">
                 <div>
                   Just want to practice?{" "}
                   <Link href="/topics/python-basics">
-                    Start coding as a guest →
+                    Start as a guest →
                   </Link>
                 </div>
-                <p style={{ marginTop: "10px", fontSize: "11px", opacity: 0.65, lineHeight: 1.4 }}>
-                  By signing in, you agree to CodeLab’s terms and privacy policy. No password required.
-                </p>
               </div>
             </>
           )}
         </div>
       </main>
+
+      {/* Bottom Sticky Minimal Footer */}
+      <footer className="auth-page-footer">
+        <span>© 2026 CodeLab · No password required</span>
+        <span>
+          <Link href="/topics/python-basics">Guest Mode</Link> ·{" "}
+          <Link href="/about">About</Link>
+        </span>
+      </footer>
     </div>
   );
 }
