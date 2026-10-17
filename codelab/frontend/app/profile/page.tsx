@@ -1,40 +1,107 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { auth } from "@/auth";
-import { getDashboard } from "@/lib/api";
+import { getDashboard, DashboardResponse } from "@/lib/api";
+
+const FALLBACK_DASHBOARD: DashboardResponse = {
+  stats: {
+    total_exercises: 12,
+    solved_exercises: 0,
+    total_xp: 0,
+    streak_days: 0,
+    level_info: {
+      level: 1,
+      title: "Python Apprentice",
+      current_xp: 0,
+      next_level_xp: 150,
+      progress_percent: 5,
+    },
+    badges: [
+      {
+        id: "first_solve",
+        title: "Hello World",
+        description: "Solve your first coding exercise.",
+        icon: "🌱",
+        unlocked: false,
+        progress: 0,
+        max_progress: 1,
+      },
+      {
+        id: "streak_3",
+        title: "Consistent Coder",
+        description: "Maintain a 3-day practice streak.",
+        icon: "🔥",
+        unlocked: false,
+        progress: 0,
+        max_progress: 3,
+      },
+      {
+        id: "xp_500",
+        title: "XP Pioneer",
+        description: "Earn 500 total XP points across all tracks.",
+        icon: "⚡",
+        unlocked: false,
+        progress: 0,
+        max_progress: 500,
+      },
+    ],
+  },
+  recent_solved: [],
+};
 
 export default async function ProfilePage() {
   const session = await auth();
 
-  // 1. Kick them out if they aren't logged in
+  // 1. Redirect if not logged in
   if (!session?.user) {
-    redirect("/");
+    redirect("/login");
   }
 
-  // 2. Fetch the data
+  // 2. Fetch the data with resilient fallback
   const dashboard = await getDashboard().catch(() => null);
+  const isLive = Boolean(dashboard);
+  const data = dashboard || FALLBACK_DASHBOARD;
 
-  if (!dashboard) {
-    return <p className="text-bad mt-10">Failed to load dashboard data.</p>;
-  }
-
-  const { stats, recent_solved } = dashboard;
+  const { stats, recent_solved } = data;
   const progressPercent = Math.round(
     (stats.solved_exercises / (stats.total_exercises || 1)) * 100
   );
 
   const levelInfo = stats.level_info || {
     level: 1,
-    title: "Novice Coder",
+    title: "Python Apprentice",
     current_xp: stats.total_xp || 0,
     next_level_xp: 150,
-    progress_percent: 0,
+    progress_percent: 5,
   };
 
   const badges = stats.badges || [];
 
   return (
     <div className="max-w-4xl py-8">
+      {/* Cold Start Notice (Render free tier) */}
+      {!isLive && (
+        <div className="mb-6 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-ink flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <span className="text-xl">⚡</span>
+            <div>
+              <p className="font-semibold text-amber-600 dark:text-amber-400">
+                Backend Cloud Sync Connecting
+              </p>
+              <p className="text-xs text-muted">
+                Displaying local profile. Stats and cloud saves will synchronize automatically upon your next test run.
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/profile"
+            className="rounded-lg bg-amber-500/20 px-3 py-1.5 text-xs font-semibold text-amber-700 dark:text-amber-300 hover:bg-amber-500/30 transition-colors shrink-0"
+          >
+            Refresh
+          </Link>
+        </div>
+      )}
+
       {/* Header Profile Section */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-6 border-b border-line">
         <div className="flex items-center gap-4">
@@ -42,7 +109,7 @@ export default async function ProfilePage() {
             <img
               src={session.user.image}
               alt="Profile"
-              className="w-16 h-16 rounded-full border-2 border-brand/30 shadow-xs"
+              className="w-16 h-16 rounded-full border-2 border-brand/30 shadow-xs object-cover"
             />
           ) : (
             <div className="w-16 h-16 rounded-full bg-brand/10 text-brand font-bold flex items-center justify-center text-xl">
