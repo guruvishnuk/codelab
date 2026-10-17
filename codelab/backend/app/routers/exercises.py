@@ -55,7 +55,24 @@ def run_exercise(
         ))
 
     all_passed = all(r.passed for r in results)
-    
+
+    is_first_solve = False
+    xp_earned = 0
+    if all_passed:
+        prev_passed = (
+            db.query(Submission)
+            .filter(
+                Submission.exercise_id == ex.id,
+                Submission.user_id == current_user.id,
+                Submission.passed == True,
+            )
+            .first()
+        )
+        if not prev_passed:
+            is_first_solve = True
+            diff_xp = {"easy": 50, "medium": 100, "hard": 200}
+            xp_earned = diff_xp.get(ex.difficulty.lower(), 50)
+
     # Save the submission tied to the logged-in user!
     db.add(Submission(
         exercise_id=ex.id, 
@@ -64,4 +81,9 @@ def run_exercise(
         passed=all_passed
     ))
     db.commit()
-    return RunResponse(passed=all_passed, results=results)
+    return RunResponse(
+        passed=all_passed,
+        results=results,
+        xp_earned=xp_earned,
+        is_first_solve=is_first_solve,
+    )

@@ -37,7 +37,12 @@ export type TestResult = {
   actual: string;
   error: string;
 };
-export type RunResponse = { passed: boolean; results: TestResult[] };
+export type RunResponse = {
+  passed: boolean;
+  results: TestResult[];
+  xp_earned?: number;
+  is_first_solve?: boolean;
+};
 
 async function get<T>(path: string): Promise<T> {
   const res = await fetch(`${BASE}${path}`, { 
@@ -69,9 +74,31 @@ export type DashboardExercise = {
   difficulty: string;
 };
 
+export type Badge = {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  unlocked: boolean;
+  progress: number;
+  max_progress: number;
+};
+
+export type LevelInfo = {
+  level: number;
+  title: string;
+  current_xp: number;
+  next_level_xp: number;
+  progress_percent: number;
+};
+
 export type DashboardStats = {
   total_exercises: number;
   solved_exercises: number;
+  total_xp: number;
+  streak_days: number;
+  level_info: LevelInfo;
+  badges: Badge[];
 };
 
 export type DashboardResponse = {

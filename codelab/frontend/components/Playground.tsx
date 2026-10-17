@@ -1,20 +1,22 @@
 "use client";
 
 import { useState, useEffect } from "react";
-// We can still import 'RunResponse' because it's just a TypeScript TYPE (which gets erased)
 import type { RunResponse } from "@/lib/api"; 
 import { submitCodeAction } from "../app/actions";
-
-
+import confetti from "canvas-confetti";
 import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
 
 export default function Playground({
   exerciseId,
   starterCode,
+  nextExerciseId,
+  topicSlug,
 }: {
   exerciseId: number;
   starterCode: string;
+  nextExerciseId?: number | null;
+  topicSlug?: string;
 }) {
   const draftKey = `draft_exercise_${exerciseId}`;
 
@@ -40,8 +42,16 @@ export default function Playground({
   async function run() {
     setRunning(true);
     setError("");
-       try {
-      setResult(await submitCodeAction(exerciseId, code));
+    try {
+      const res = await submitCodeAction(exerciseId, code);
+      setResult(res);
+      if (res.passed) {
+        confetti({
+          particleCount: 90,
+          spread: 70,
+          origin: { y: 0.65 },
+        });
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong.");
     } finally {
@@ -57,7 +67,6 @@ export default function Playground({
 
       <div className="overflow-hidden rounded-md border border-line">
         {!isLoaded ? (
-          // Show a temporary gray box while we check the hard drive
           <div className="h-[300px] w-full bg-ink/50 animate-pulse" />
         ) : (
           <CodeMirror
@@ -75,9 +84,9 @@ export default function Playground({
         <button
           onClick={run}
           disabled={running}
-          className="rounded-md bg-brand px-5 py-2 font-medium text-white hover:bg-brand-dark disabled:opacity-60"
+          className="rounded-md bg-brand px-5 py-2 font-medium text-white hover:bg-brand-dark disabled:opacity-60 transition-colors"
         >
-          {running ? "Running..." : "Run tests"}
+          {running ? "Running tests..." : "Run tests"}
         </button>
         <button
           onClick={() => {
@@ -85,7 +94,7 @@ export default function Playground({
             setResult(null);
             localStorage.removeItem(draftKey);
           }}
-          className="rounded-md border border-line bg-white px-4 py-2 text-sm hover:bg-brand-soft"
+          className="rounded-md border border-line bg-white px-4 py-2 text-sm hover:bg-brand-soft transition-colors"
         >
           Reset code
         </button>
@@ -95,18 +104,52 @@ export default function Playground({
 
       {result && (
         <div className="mt-6" aria-live="polite">
-          <p
-            className={`text-lg font-semibold ${result.passed ? "text-ok" : "text-bad"}`}
-          >
-            {result.passed
-              ? "All tests passed. Nice work."
-              : `${result.results.filter((r) => r.passed).length} of ${result.results.length} tests passed.`}
-          </p>
-          <ul className="mt-3 space-y-3">
+          {result.passed ? (
+            <div className="mb-4 rounded-lg border border-ok/30 bg-ok/10 p-4 text-ink shadow-sm">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h3 className="flex items-center gap-2 text-lg font-bold text-ok">
+                    <span>🎉</span> All Tests Passed! Nice work!
+                  </h3>
+                  {result.is_first_solve && result.xp_earned ? (
+                    <p className="mt-1 text-sm font-semibold text-brand">
+                      +{result.xp_earned} XP Earned! 🚀
+                    </p>
+                  ) : (
+                    <p className="mt-1 text-xs text-muted">
+                      Challenge solved. Progress saved!
+                    </p>
+                  )}
+                </div>
+
+                {nextExerciseId ? (
+                  <a
+                    href={`/exercises/${nextExerciseId}`}
+                    className="inline-flex items-center gap-1 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-dark transition-all"
+                  >
+                    Next Challenge →
+                  </a>
+                ) : topicSlug ? (
+                  <a
+                    href={`/topics/${topicSlug}`}
+                    className="inline-flex items-center gap-1 rounded-md border border-line bg-white px-4 py-2 text-sm font-semibold text-ink shadow-sm hover:bg-brand-soft transition-all"
+                  >
+                    Topic Complete! Notes →
+                  </a>
+                ) : null}
+              </div>
+            </div>
+          ) : (
+            <p className="text-lg font-semibold text-bad mb-3">
+              {result.results.filter((r) => r.passed).length} of {result.results.length} tests passed.
+            </p>
+          )}
+
+          <ul className="space-y-3">
             {result.results.map((r, i) => (
               <li
                 key={i}
-                className="rounded-md border border-line bg-white p-3 text-sm"
+                className="rounded-md border border-line bg-white p-3 text-sm shadow-xs"
               >
                 <p
                   className={

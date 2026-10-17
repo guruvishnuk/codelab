@@ -43,6 +43,8 @@ class TestResult(BaseModel):
 class RunResponse(BaseModel):
     passed: bool
     results: list[TestResult]
+    xp_earned: int = 0
+    is_first_solve: bool = False
 
 
 class DashboardExercise(BaseModel):
@@ -51,9 +53,33 @@ class DashboardExercise(BaseModel):
     topic_slug: str
     difficulty: str
 
+
+class Badge(BaseModel):
+    id: str
+    title: str
+    description: str
+    icon: str
+    unlocked: bool
+    progress: int
+    max_progress: int
+
+
+class LevelInfo(BaseModel):
+    level: int
+    title: str
+    current_xp: int
+    next_level_xp: int
+    progress_percent: int
+
+
 class DashboardStats(BaseModel):
     total_exercises: int
     solved_exercises: int
+    total_xp: int = 0
+    streak_days: int = 0
+    level_info: LevelInfo | None = None
+    badges: list[Badge] = []
+
 
 class DashboardResponse(BaseModel):
     stats: DashboardStats

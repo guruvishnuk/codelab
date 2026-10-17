@@ -19,7 +19,12 @@ export default async function ExercisePage({ params }: { params: { id: string } 
         <div className="notes">
           <ReactMarkdown>{ex.prompt_md}</ReactMarkdown>
         </div>
-        <Playground exerciseId={ex.id} starterCode={ex.starter_code} />
+        <Playground
+          exerciseId={ex.id}
+          starterCode={ex.starter_code}
+          nextExerciseId={ex.next_exercise_id}
+          topicSlug={ex.topic_slug}
+        />
       </div>
 
       <div className="mt-8">
