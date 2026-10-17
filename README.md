@@ -35,14 +35,18 @@
 
 ## ✨ Key Features
 
-- 📖 **Curated Concept Notes**: Clean, distraction-free markdown lessons explaining fundamental to intermediate programming topics.
-- 💻 **Interactive Code Playground**: Embedded code editor with starter templates, test case runners, and real-time output feedback.
-- 🧪 **Automated Test Evaluation**: User code executes securely against structured test cases (inputs and expected outputs) with timeout protection.
-- 🔐 **Full Authentication (OAuth 2.0)**: Seamless login via **Google** and **GitHub** powered by Auth.js (NextAuth v5) and stateless cross-service JWT verification.
-- 📊 **Learner Dashboard & Progress Tracking**: Solved exercises are tracked per user and stored persistently in PostgreSQL.
+- 🌌 **Interactive 3D Experience**: Cinematic Three.js WebGL background with animated torus knot, floating core, dynamic starfield, and interactive 3D perspective hover cards.
+- 📖 **Curated Concept Notes**: Clean, distraction-free markdown lessons explaining fundamental to intermediate programming topics in under two minutes.
+- 💻 **Pro In-Browser Playground**: Syntax-highlighted CodeMirror 6 editor with draft autosave, execution timer (ms), confetti celebrations, and `Ctrl+Enter` / `Cmd+Enter` instant test execution.
+- ⚡ **Gamification & Progression**: Full XP rewards engine, active daily streak tracker, level rank progression (Apprentice to Master), and unlockable achievement badges.
+- 🤖 **Socratic AI Mentor**: 3-stage progressive hint system (Concept $\rightarrow$ Logic $\rightarrow$ Code Skeleton) guiding learners toward solutions without spoiling answers.
+- 🧪 **Automated Test Evaluation**: User code executes securely against structured test cases (inputs and expected outputs) with timeout protection and test badges.
+- 🔒 **Viewport-Locked Cyberpunk Auth**: Custom OAuth 2.0 sign-in page matching the 3D dark theme for **Google** and **GitHub** with zero-scroll responsive mobile design.
+- 🛡️ **Zero-Downtime Fallback Resilience**: Built-in curriculum and profile fallback caching that guarantees instant rendering even during server cold starts.
+- 📊 **Learner Dashboard**: Solved exercises, XP counters, and milestone achievement progress persisted across devices.
 - 🌗 **Dark & Light Mode**: Flawless adaptive UI with high-contrast syntax themes and persistent preference toggle.
-- 🔍 **Instant Search**: Rapid search filter across all topics and exercises.
-- 🛡️ **Admin Portal**: Built-in curriculum administration interface to add and curate topics and challenges.
+- 🔍 **Instant Search**: Rapid search filter across all curriculum topics and programming challenges.
+- 🛡️ **Admin Portal**: Curriculum administration interface to add, edit, and curate topics and challenges.
 
 ---
 
