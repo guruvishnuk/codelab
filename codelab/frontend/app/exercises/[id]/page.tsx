@@ -2,10 +2,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import { getExercise } from "@/lib/api";
+import { getExerciseFallback } from "@/lib/fallback";
 import Playground from "@/components/Playground";
 
 export default async function ExercisePage({ params }: { params: { id: string } }) {
-  const ex = await getExercise(params.id).catch(() => null);
+  let ex = await getExercise(params.id).catch(() => null);
+  if (!ex) {
+    ex = getExerciseFallback(params.id);
+  }
   if (!ex) notFound();
 
   return (

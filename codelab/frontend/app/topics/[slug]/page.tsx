@@ -2,9 +2,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import { getTopic } from "@/lib/api";
+import { getTopicFallback } from "@/lib/fallback";
 
 export default async function TopicPage({ params }: { params: { slug: string } }) {
-  const topic = await getTopic(params.slug).catch(() => null);
+  let topic = await getTopic(params.slug).catch(() => null);
+  if (!topic) {
+    topic = getTopicFallback(params.slug);
+  }
   if (!topic) notFound();
 
   return (
