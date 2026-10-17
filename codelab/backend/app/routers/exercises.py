@@ -4,7 +4,7 @@ from ..database import get_db
 from ..models import Exercise, Submission, User
 from ..schemas import ExerciseDetail, RunRequest, RunResponse, TestResult
 from ..runner import run_python
-from ..auth import get_current_user
+from ..auth import get_optional_current_user
 
 router = APIRouter(prefix="/api/exercises", tags=["exercises"])
 
@@ -39,7 +39,7 @@ def run_exercise(
     exercise_id: int, 
     body: RunRequest, 
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User | None = Depends(get_optional_current_user)
 ):
     ex = db.get(Exercise, exercise_id)
     if not ex:
@@ -58,7 +58,7 @@ def run_exercise(
 
     is_first_solve = False
     xp_earned = 0
-    if all_passed:
+    if all_passed and current_user:
         prev_passed = (
             db.query(Submission)
             .filter(
@@ -73,14 +73,16 @@ def run_exercise(
             diff_xp = {"easy": 50, "medium": 100, "hard": 200}
             xp_earned = diff_xp.get(ex.difficulty.lower(), 50)
 
-    # Save the submission tied to the logged-in user!
-    db.add(Submission(
-        exercise_id=ex.id, 
-        user_id=current_user.id, 
-        code=body.code, 
-        passed=all_passed
-    ))
-    db.commit()
+    # If user is logged in, save their progress in the database!
+    if current_user:
+        db.add(Submission(
+            exercise_id=ex.id, 
+            user_id=current_user.id, 
+            code=body.code, 
+            passed=all_passed
+        ))
+        db.commit()
+
     return RunResponse(
         passed=all_passed,
         results=results,

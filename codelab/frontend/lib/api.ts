@@ -63,7 +63,16 @@ export async function runCode(id: number, code: string): Promise<RunResponse> {
     headers: getAuthHeaders(),
     body: JSON.stringify({ code }),
   });
-  if (!res.ok) throw new Error("Could not run your code. Are you logged in?");
+  if (!res.ok) {
+    let detail = "Could not run your code. Are you logged in?";
+    try {
+      const errData = await res.json();
+      detail = errData.detail || errData.message || detail;
+    } catch {
+      detail = `Server returned status ${res.status}`;
+    }
+    throw new Error(detail);
+  }
   return res.json();
 }
 

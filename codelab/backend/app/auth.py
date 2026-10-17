@@ -7,7 +7,7 @@ from .database import get_db
 from .models import User
 
 # This must exactly match the AUTH_SECRET we will put in Next.js
-SECRET_KEY = os.getenv("AUTH_SECRET", "super-secret-dev-key")
+SECRET_KEY = os.getenv("AUTH_SECRET", "9b7f8e3d2c1a4f6e8b0d7c5a3f2e1d0c")
 ALGORITHM = "HS256"
 
 # Tells FastAPI to look for a "Bearer" token in the Authorization header
@@ -60,7 +60,7 @@ oauth2_scheme_optional = OAuth2PasswordBearer(tokenUrl="auth/login", auto_error=
 def get_optional_current_user(token: str | None = Depends(oauth2_scheme_optional), db: Session = Depends(get_db)):
     """
     Like get_current_user, but returns None if the user isn't logged in,
-    instead of throwing a 401 error. Perfect for public pages.
+    instead of throwing a 401 error. Perfect for public pages and flexible runners.
     """
     if not token:
         return None
@@ -70,8 +70,18 @@ def get_optional_current_user(token: str | None = Depends(oauth2_scheme_optional
         email = payload.get("email")
         if not email:
             return None
-        # Just return the user if they exist. We won't auto-create on public pages.
-        return db.query(User).filter(User.email == email).first()
+        user = db.query(User).filter(User.email == email).first()
+        if user is None:
+            user = User(
+                email=email,
+                name=payload.get("name", "Unknown"),
+                avatar_url=payload.get("picture", ""),
+                provider="oauth"
+            )
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+        return user
     except jwt.PyJWTError:
-        # Invalid or expired token, treat as logged out
+        # Invalid or expired token, treat as guest
         return None

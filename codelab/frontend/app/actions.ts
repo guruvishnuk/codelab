@@ -6,7 +6,16 @@ import { cookies } from "next/headers";
 // This acts as a secure bridge. The browser will call this, 
 // and Next.js will magically run it on the server and return the result!
 export async function submitCodeAction(exerciseId: number, code: string) {
-  return await runCode(exerciseId, code);
+  try {
+    const res = await runCode(exerciseId, code);
+    return { ...res, error: undefined };
+  } catch (err: any) {
+    return {
+      passed: false,
+      results: [],
+      error: err?.message || "Failed to execute code against backend.",
+    };
+  }
 }
 
 

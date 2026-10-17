@@ -44,6 +44,11 @@ export default function Playground({
     setError("");
     try {
       const res = await submitCodeAction(exerciseId, code);
+      if ((res as any).error) {
+        setError((res as any).error);
+        setResult(null);
+        return;
+      }
       setResult(res);
       if (res.passed) {
         confetti({
