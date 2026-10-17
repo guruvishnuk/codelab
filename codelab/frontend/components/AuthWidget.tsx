@@ -28,15 +28,11 @@ export default async function AuthWidget() {
   }
 
   return (
-    <form
-      action={async () => {
-        "use server";
-        await signIn();
-      }}
+    <Link
+      href="/login"
+      className="rounded-md bg-brand px-4 py-1.5 text-sm font-medium text-white hover:bg-brand-dark transition-colors"
     >
-      <button type="submit" className="rounded-md bg-brand px-4 py-1.5 text-sm font-medium text-white hover:bg-brand-dark">
-        Log In
-      </button>
-    </form>
+      Log In
+    </Link>
   );
 }

@@ -93,7 +93,7 @@ export default async function Home() {
                 {session.user.name?.split(" ")[0] || "Profile"} ⚡
               </Link>
             ) : (
-              <Link className="btn p" href="/api/auth/signin">
+              <Link className="btn p" href="/login">
                 Sign in
               </Link>
             )}
