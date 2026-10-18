@@ -19,14 +19,14 @@ export default async function ExercisePage({ params }: { params: { id: string } 
         <Link href="/" className="hover:text-brand transition-colors">
           Tracks
         </Link>
-        <span>/</span>
+        <span className="text-line">/</span>
         <Link
           href={`/topics/${ex.topic_slug}`}
-          className="hover:text-brand transition-colors capitalize"
+          className="hover:text-brand transition-colors capitalize text-muted"
         >
           {ex.topic_slug.replace(/-/g, " ")}
         </Link>
-        <span>/</span>
+        <span className="text-line">/</span>
         <span className="text-ink font-semibold">Challenge #{ex.id}</span>
       </nav>
 
@@ -37,21 +37,21 @@ export default async function ExercisePage({ params }: { params: { id: string } 
             {ex.title}
           </h1>
           <p className="text-xs text-muted mt-1 font-mono">
-            Topic: <span className="text-brand uppercase">{ex.topic_slug}</span>
+            Track: <span className="text-brand font-semibold uppercase">{ex.topic_slug}</span>
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <span
-            className={`rounded-full px-3 py-1 text-xs font-semibold uppercase ${
+            className={`pill-badge ${
               ex.difficulty === "easy"
-                ? "border border-ok/30 bg-ok/10 text-ok"
+                ? "pill-badge-mint"
                 : ex.difficulty === "medium"
-                ? "border border-amber-500/30 bg-amber-500/15 text-amber-300"
-                : "border border-bad/30 bg-bad/10 text-bad"
+                ? "pill-badge-amber"
+                : "pill-badge-coral"
             }`}
           >
-            {ex.difficulty} (+{ex.difficulty === "easy" ? "50" : "100"} XP)
+            {ex.difficulty.toUpperCase()} • +{ex.difficulty === "easy" ? "50" : "100"} XP
           </span>
         </div>
       </div>
@@ -60,36 +60,38 @@ export default async function ExercisePage({ params }: { params: { id: string } 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1.8fr)] items-start">
         {/* Left: Challenge Prompt & Instructions */}
         <div className="space-y-4">
-          <div className="rounded-2xl border border-line bg-surface/70 p-6 shadow-xs backdrop-blur-xs">
-            <div className="mb-3 flex items-center justify-between border-b border-line/60 pb-2.5">
-              <span className="font-mono text-xs font-semibold uppercase tracking-wider text-muted flex items-center gap-1.5">
-                <span>📝</span> Instructions
+          <div className="cyber-card cyber-card-accent p-6 backdrop-blur-md">
+            <div className="mb-4 flex items-center justify-between border-b border-line/60 pb-3">
+              <span className="font-mono text-xs font-semibold uppercase tracking-wider text-muted flex items-center gap-2">
+                <span>📝</span> Problem Statement
               </span>
-              <span className="text-[11px] text-muted font-mono">Python 3</span>
+              <span className="text-[11px] text-muted font-mono bg-surface-elevated px-2 py-0.5 rounded border border-line">
+                Python 3.11
+              </span>
             </div>
             <div className="notes">
               <ReactMarkdown>{ex.prompt_md}</ReactMarkdown>
             </div>
           </div>
 
-          {/* Socratic Helper Card */}
-          <div className="rounded-xl border border-line/60 bg-surface/40 p-4 text-xs text-muted space-y-1.5">
-            <div className="flex items-center gap-2 font-semibold text-ink">
-              <span>💡</span>
-              <span>Pro Tip</span>
+          {/* Socratic Pro-Tip Card */}
+          <div className="cyber-card p-4.5 border-brand/30 bg-surface/60 space-y-2">
+            <div className="flex items-center gap-2 text-xs font-semibold text-brand font-mono">
+              <span>⚡</span>
+              <span>Pro Tip & Keybindings</span>
             </div>
-            <p>
-              Write your solution in the editor on the right and press{" "}
-              <kbd className="rounded border border-line bg-surface px-1.5 py-0.5 font-mono text-[10px] text-brand">
+            <p className="text-xs text-muted leading-relaxed">
+              Write your function in the CodeMirror editor. Use{" "}
+              <kbd className="rounded border border-line bg-surface-elevated px-1.5 py-0.5 font-mono text-[10px] text-brand">
                 Ctrl + Enter
               </kbd>{" "}
-              to run the automated test suite immediately.
+              (or <kbd className="rounded border border-line bg-surface-elevated px-1.5 py-0.5 font-mono text-[10px] text-brand">⌘ + Enter</kbd>) to trigger instant automated test evaluation.
             </p>
           </div>
         </div>
 
         {/* Right: CodeMirror Sandbox & Output Terminal */}
-        <div className="rounded-2xl border border-line bg-surface/50 p-5 shadow-xs">
+        <div className="cyber-card p-5 backdrop-blur-md">
           <Playground
             exerciseId={ex.id}
             starterCode={ex.starter_code}
@@ -103,7 +105,7 @@ export default async function ExercisePage({ params }: { params: { id: string } 
       <div className="pt-4 flex items-center justify-between border-t border-line/60">
         <Link
           href={`/topics/${ex.topic_slug}`}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface/80 px-4 py-2 text-xs font-semibold text-ink hover:bg-surface-hover hover:border-brand/40 transition-colors"
+          className="btn-cyber btn-cyber-secondary text-xs"
         >
           ← Back to Topic Notes
         </Link>
@@ -111,9 +113,9 @@ export default async function ExercisePage({ params }: { params: { id: string } 
         {ex.next_exercise_id && (
           <Link
             href={`/exercises/${ex.next_exercise_id}`}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-brand px-4 py-2 text-xs font-semibold text-white hover:bg-brand-dark shadow-sm shadow-brand/20 transition-all"
+            className="btn-cyber btn-cyber-primary text-xs"
           >
-            <span>Next Exercise</span>
+            <span>Next Challenge</span>
             <span>→</span>
           </Link>
         )}

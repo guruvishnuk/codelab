@@ -4,29 +4,27 @@ import { useState } from "react";
 import { createExerciseAction } from "../actions";
 
 export default function AdminPage() {
-  const [topicId, setTopicId] = useState("1"); // Default to Topic 1
+  const [topicId, setTopicId] = useState("1");
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setMessage("Saving exercise to database...");
+    setMessage("Publishing challenge to database...");
 
     try {
-      // 1. Prepare the data
       const exerciseData = {
         title: title,
         difficulty: "easy",
-        prompt_md: "Write a function that does something cool.",
+        prompt_md: "Write a function that solves the given problem statement.",
         starter_code: "# Start coding here\n",
         test_cases: [{ input: "1\n", expected: "1" }],
       };
 
-      // 2. Send it securely via the Server Action
       await createExerciseAction(parseInt(topicId), exerciseData);
 
-      setMessage(`Success! "${title}" was added to the database.`);
-      setTitle(""); // Clear the form
+      setMessage(`Success! "${title}" was published to the curriculum.`);
+      setTitle("");
     } catch (err: any) {
       setMessage(err.message || "Failed to create exercise.");
     }
@@ -35,20 +33,20 @@ export default function AdminPage() {
   return (
     <div className="max-w-2xl py-2 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold font-display text-ink mb-1">Curriculum Admin Portal</h1>
+        <h1 className="text-3xl font-bold font-display text-ink mb-1">Curriculum Administration</h1>
         <p className="text-sm text-muted">Create and publish interactive Python exercises visually.</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-surface p-6 md:p-8 rounded-2xl border border-line space-y-5 shadow-xs">
-        {/* Topic Selector */}
+      <form onSubmit={handleSubmit} className="cyber-card cyber-card-accent p-6 md:p-8 space-y-5 backdrop-blur-md">
+        {/* Track Selector */}
         <div>
           <label className="block text-xs font-mono uppercase tracking-wider text-muted mb-2">
-            Select Track
+            Target Track
           </label>
           <select 
             value={topicId} 
             onChange={(e) => setTopicId(e.target.value)}
-            className="w-full rounded-xl border border-line bg-surface-elevated px-4 py-2.5 text-sm text-ink outline-none focus:border-brand focus:ring-1 focus:ring-brand"
+            className="w-full rounded-xl border border-line bg-surface-elevated px-4 py-2.5 text-sm text-ink outline-none focus:border-brand focus:ring-1 focus:ring-brand font-mono"
           >
             <option value="1">1. Python Basics</option>
             <option value="2">2. Control Flow</option>
@@ -62,7 +60,7 @@ export default function AdminPage() {
         {/* Title Input */}
         <div>
           <label className="block text-xs font-mono uppercase tracking-wider text-muted mb-2">
-            Exercise Title
+            Challenge Title
           </label>
           <input 
             type="text" 
@@ -76,9 +74,9 @@ export default function AdminPage() {
 
         <button 
           type="submit" 
-          className="rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-dark shadow-sm shadow-brand/25 transition-all"
+          className="btn-cyber btn-cyber-primary"
         >
-          Publish Exercise →
+          Publish Challenge →
         </button>
 
         {/* Status Message */}

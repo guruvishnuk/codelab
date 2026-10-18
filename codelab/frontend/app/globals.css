@@ -5,13 +5,18 @@
 :root {
   --bg: #0f0b24;
   --bg2: #181240;
+  --bg-elevated: #221a55;
   --ink: #f1eeff;
   --mut: #a29cc9;
   --line: #2c2564;
+  --line-light: rgba(143, 123, 255, 0.2);
   --v: #8f7bff;
+  --v-glow: rgba(143, 123, 255, 0.35);
   --c: #ff7f70;
   --m: #4be3c3;
   --a: #ffc857;
+  --code: #0a0719;
+  --codeink: #e9e6ff;
   color-scheme: dark;
 }
 
@@ -21,12 +26,24 @@ body {
   font-family: var(--font-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+  position: relative;
+}
+
+/* Background Coordinate Grid & Aurora Drift */
+.bg-grid-ambient {
+  background-image: 
+    radial-gradient(rgba(143, 123, 255, 0.12) 1px, transparent 1px),
+    radial-gradient(ellipse at 80% 0%, rgba(143, 123, 255, 0.14), transparent 50%),
+    radial-gradient(ellipse at 20% 50%, rgba(255, 127, 112, 0.07), transparent 45%);
+  background-size: 32px 32px, 100% 100%, 100% 100%;
+  background-repeat: repeat, no-repeat, no-repeat;
+  background-attachment: fixed;
 }
 
 /* Custom Sleek Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
 ::-webkit-scrollbar-track {
   background: #0f0b24;
@@ -34,9 +51,11 @@ body {
 ::-webkit-scrollbar-thumb {
   background: #2c2564;
   border-radius: 999px;
+  border: 1px solid rgba(143, 123, 255, 0.15);
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #8f7bff;
+  box-shadow: 0 0 10px rgba(143, 123, 255, 0.5);
 }
 
 :focus-visible {
@@ -44,65 +63,258 @@ body {
   outline-offset: 2px;
 }
 
-/* Lesson notes: tuned for dark theme reading */
-.notes {
-  @apply prose prose-invert max-w-[70ch];
+/* Glassmorphic Cyber Card Styles */
+.cyber-card {
+  background: color-mix(in srgb, var(--bg2) 84%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: 0 20px 50px -15px rgba(10, 7, 25, 0.7);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s, box-shadow 0.25s;
+  position: relative;
+  overflow: hidden;
 }
 
-.notes h1, .notes h2, .notes h3 {
+.cyber-card:hover {
+  border-color: rgba(143, 123, 255, 0.5);
+  box-shadow: 0 25px 60px -15px rgba(143, 123, 255, 0.22);
+}
+
+.cyber-card-accent::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2.5px;
+  background: linear-gradient(90deg, var(--v), var(--c), var(--m));
+  z-index: 2;
+}
+
+/* Pill Badges */
+.pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.pill-badge-violet {
+  background: rgba(143, 123, 255, 0.15);
+  border: 1px solid rgba(143, 123, 255, 0.35);
+  color: #c9bfff;
+}
+
+.pill-badge-mint {
+  background: rgba(75, 227, 195, 0.15);
+  border: 1px solid rgba(75, 227, 195, 0.35);
+  color: #4be3c3;
+}
+
+.pill-badge-amber {
+  background: rgba(255, 200, 87, 0.15);
+  border: 1px solid rgba(255, 200, 87, 0.35);
+  color: #ffc857;
+}
+
+.pill-badge-coral {
+  background: rgba(255, 92, 119, 0.15);
+  border: 1px solid rgba(255, 92, 119, 0.35);
+  color: #ff7f70;
+}
+
+/* Button with Subtle Neon Glow */
+.btn-cyber {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s, background-color 0.2s, border-color 0.2s;
+}
+
+.btn-cyber-primary {
+  background: linear-gradient(135deg, var(--v), #745cfc);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 24px -6px rgba(143, 123, 255, 0.45);
+}
+
+.btn-cyber-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px -6px rgba(143, 123, 255, 0.65);
+}
+
+.btn-cyber-secondary {
+  background: color-mix(in srgb, var(--bg2) 90%, transparent);
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+
+.btn-cyber-secondary:hover {
+  transform: translateY(-2px);
+  border-color: var(--v);
+  background: color-mix(in srgb, var(--v) 12%, var(--bg2));
+}
+
+/* Lesson Notes Markdown Typography: Tuned for Ultra-Crisp Reading */
+.notes {
+  @apply prose prose-invert max-w-[72ch];
+}
+
+.notes h1, .notes h2, .notes h3, .notes h4 {
   color: var(--ink);
   font-family: var(--font-display), sans-serif;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
+  font-weight: 700;
+  margin-top: 1.5em;
+  margin-bottom: 0.6em;
+}
+
+.notes h2 {
+  font-size: 1.35rem;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0.4em;
+}
+
+.notes h3 {
+  font-size: 1.15rem;
 }
 
 .notes p, .notes li {
   color: var(--ink);
   opacity: 0.92;
-  line-height: 1.7;
+  line-height: 1.75;
+  font-size: 0.95rem;
 }
 
 .notes strong {
   color: #ffffff;
+  font-weight: 700;
 }
 
 .notes pre {
-  background-color: #0a0719;
-  border: 1px solid var(--line);
-  color: #e9e6ff;
-  border-radius: 12px;
-  font-size: 0.875rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  background-color: #0a0719 !important;
+  border: 1px solid var(--line) !important;
+  color: #e9e6ff !important;
+  border-radius: 14px !important;
+  padding: 1.1rem 1.25rem !important;
+  font-size: 0.875rem !important;
+  font-family: var(--font-mono), monospace !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+  position: relative;
+  overflow-x: auto;
+}
+
+.notes pre::before {
+  content: "python";
+  position: absolute;
+  top: 8px;
+  right: 14px;
+  font-size: 10px;
+  font-family: var(--font-mono), monospace;
+  color: var(--mut);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.6;
 }
 
 .notes code::before,
 .notes code::after {
-  content: none;
+  content: none !important;
 }
 
 .notes :not(pre) > code {
-  background-color: rgba(143, 123, 255, 0.16);
-  color: #c9bfff;
-  border: 1px solid rgba(143, 123, 255, 0.25);
-  padding: 0.15rem 0.4rem;
-  border-radius: 6px;
-  font-family: var(--font-mono), monospace;
-  font-size: 0.88em;
+  background-color: rgba(143, 123, 255, 0.15) !important;
+  color: #c9bfff !important;
+  border: 1px solid rgba(143, 123, 255, 0.28) !important;
+  padding: 0.18rem 0.45rem !important;
+  border-radius: 6px !important;
+  font-family: var(--font-mono), monospace !important;
+  font-size: 0.88em !important;
+  font-weight: 500;
 }
 
 .notes a {
   color: var(--v);
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
+  border-bottom: 1px dashed var(--v);
+  transition: border-bottom-style 0.2s;
 }
 
 .notes a:hover {
-  text-decoration: underline;
+  border-bottom-style: solid;
 }
 
 .notes blockquote {
-  border-left-color: var(--v);
+  border-left: 3px solid var(--v);
   color: var(--mut);
-  background-color: rgba(24, 18, 64, 0.4);
-  padding: 0.5rem 1rem;
-  border-radius: 0 8px 8px 0;
+  background-color: rgba(24, 18, 64, 0.6);
+  padding: 0.8rem 1.2rem;
+  border-radius: 0 12px 12px 0;
+  font-style: normal;
+  border-top: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.notes ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.notes ul > li {
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.notes ul > li::before {
+  content: "▹";
+  position: absolute;
+  left: 0;
+  color: var(--v);
+  font-weight: bold;
+}
+
+/* CodeMirror Terminal Overrides */
+.cm-editor {
+  background-color: #0a0719 !important;
+  color: #e9e6ff !important;
+  font-family: var(--font-mono), monospace !important;
+  font-size: 13.5px !important;
+}
+
+.cm-gutters {
+  background-color: #0a0719 !important;
+  color: #5d558a !important;
+  border-right: 1px solid var(--line) !important;
+}
+
+.cm-activeLineGutter {
+  background-color: rgba(143, 123, 255, 0.15) !important;
+  color: var(--v) !important;
+}
+
+.cm-activeLine {
+  background-color: rgba(143, 123, 255, 0.05) !important;
+}
+
+.cm-cursor {
+  border-left-color: #ff7f70 !important;
+  border-left-width: 2px !important;
+}
+
+.cm-selectionBackground, ::selection {
+  background-color: rgba(143, 123, 255, 0.3) !important;
 }

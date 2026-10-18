@@ -81,7 +81,7 @@ export default async function ProfilePage() {
     <div className="max-w-4xl py-2 space-y-8">
       {/* Cold Start Notice (Render free tier) */}
       {!isLive && (
-        <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-ink flex items-center justify-between gap-4">
+        <div className="cyber-card border-amber-500/40 bg-amber-500/10 p-4 text-sm text-ink flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <span className="text-xl">⚡</span>
             <div>
@@ -124,17 +124,17 @@ export default async function ProfilePage() {
 
         {/* Level & Streak Pill Highlights */}
         <div className="flex items-center gap-2">
-          <div className="rounded-full bg-brand-soft px-4 py-1.5 text-xs font-bold text-brand border border-brand/30 flex items-center gap-1.5">
+          <span className="pill-badge pill-badge-violet">
             <span>⚡</span> {stats.total_xp || 0} XP
-          </div>
-          <div className="rounded-full bg-amber-500/15 px-4 py-1.5 text-xs font-bold text-amber-300 border border-amber-500/30 flex items-center gap-1.5">
+          </span>
+          <span className="pill-badge pill-badge-amber">
             <span>🔥</span> {stats.streak_days || 0} Day Streak
-          </div>
+          </span>
         </div>
       </div>
 
       {/* Level Progression Banner */}
-      <div className="rounded-2xl border border-line bg-surface p-6 shadow-xs">
+      <div className="cyber-card cyber-card-accent p-6 shadow-xs backdrop-blur-md">
         <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-brand font-mono">
@@ -160,7 +160,7 @@ export default async function ProfilePage() {
 
       {/* Stats Summary Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="rounded-2xl border border-line bg-surface p-5 shadow-xs">
+        <div className="cyber-card p-5">
           <div className="text-muted text-xs font-mono font-semibold uppercase tracking-wider mb-1">
             Curriculum Solved
           </div>
@@ -168,12 +168,12 @@ export default async function ProfilePage() {
             {stats.solved_exercises}{" "}
             <span className="text-sm font-medium text-muted">/ {stats.total_exercises}</span>
           </div>
-          <div className="mt-2 h-1.5 w-full rounded-full bg-surface-elevated overflow-hidden">
+          <div className="mt-2.5 h-1.5 w-full rounded-full bg-surface-elevated overflow-hidden">
             <div className="h-full bg-ok" style={{ width: `${progressPercent}%` }} />
           </div>
         </div>
 
-        <div className="rounded-2xl border border-line bg-surface p-5 shadow-xs">
+        <div className="cyber-card p-5">
           <div className="text-muted text-xs font-mono font-semibold uppercase tracking-wider mb-1">
             Active Streak
           </div>
@@ -186,7 +186,7 @@ export default async function ProfilePage() {
           </p>
         </div>
 
-        <div className="rounded-2xl border border-line bg-surface p-5 shadow-xs">
+        <div className="cyber-card p-5">
           <div className="text-muted text-xs font-mono font-semibold uppercase tracking-wider mb-1">
             Total XP Earned
           </div>
@@ -206,7 +206,7 @@ export default async function ProfilePage() {
           {badges.map((badge) => (
             <div
               key={badge.id}
-              className={`rounded-2xl border p-4.5 transition-all ${
+              className={`cyber-card p-4.5 transition-all ${
                 badge.unlocked
                   ? "border-brand/40 bg-surface shadow-glow"
                   : "border-line bg-surface/50 opacity-60"
@@ -218,7 +218,7 @@ export default async function ProfilePage() {
                   <div className="flex items-center justify-between">
                     <h3 className="font-bold text-sm text-ink">{badge.title}</h3>
                     {badge.unlocked ? (
-                      <span className="rounded-full bg-ok/15 text-ok border border-ok/30 px-2 py-0.5 text-[10px] font-bold uppercase font-mono">
+                      <span className="pill-badge pill-badge-mint">
                         Unlocked
                       </span>
                     ) : (
@@ -238,14 +238,14 @@ export default async function ProfilePage() {
       {/* Solved Exercises List */}
       <div>
         <h2 className="text-xl font-bold font-display text-ink mb-4 flex items-center gap-2">
-          <span>📝</span> Recently Solved
+          <span>📝</span> Recently Solved Challenges
         </h2>
         {recent_solved.length === 0 ? (
-          <div className="rounded-2xl border border-line bg-surface p-8 text-center">
-            <p className="text-muted mb-3">You haven't solved any exercises yet.</p>
+          <div className="cyber-card p-8 text-center">
+            <p className="text-muted mb-3 text-sm">You haven't solved any exercises yet.</p>
             <Link
               href="/topics/python-basics"
-              className="inline-block rounded-xl bg-brand px-5 py-2 text-sm font-semibold text-white hover:bg-brand-dark shadow-sm shadow-brand/20 transition-all"
+              className="btn-cyber btn-cyber-primary text-xs"
             >
               Start Python Basics →
             </Link>
@@ -256,27 +256,27 @@ export default async function ProfilePage() {
               <li key={ex.id}>
                 <Link
                   href={`/exercises/${ex.id}`}
-                  className="flex items-center justify-between rounded-xl border border-line bg-surface p-4 hover:border-brand hover:bg-surface-hover hover:shadow-xs transition-all"
+                  className="cyber-card p-4 flex items-center justify-between hover:border-brand hover:shadow-glow transition-all"
                 >
                   <div>
-                    <span className="font-semibold text-ink block">{ex.title}</span>
+                    <span className="font-semibold text-ink block text-sm">{ex.title}</span>
                     <span className="text-xs text-muted font-mono uppercase tracking-wider">
                       {ex.topic_slug}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span
-                      className={`rounded-md px-2.5 py-0.5 text-xs font-semibold uppercase ${
+                      className={`pill-badge ${
                         ex.difficulty === "easy"
-                          ? "bg-ok/15 text-ok border border-ok/30"
+                          ? "pill-badge-mint"
                           : ex.difficulty === "medium"
-                          ? "bg-amber-500/15 text-amber-300 border border-amber-500/30"
-                          : "bg-bad/15 text-bad border border-bad/30"
+                          ? "pill-badge-amber"
+                          : "pill-badge-coral"
                       }`}
                     >
-                      {ex.difficulty}
+                      {ex.difficulty.toUpperCase()}
                     </span>
-                    <span className="text-xs font-semibold text-ok bg-ok/15 border border-ok/30 px-3 py-1 rounded-full">
+                    <span className="pill-badge pill-badge-mint">
                       ✓ Solved
                     </span>
                   </div>

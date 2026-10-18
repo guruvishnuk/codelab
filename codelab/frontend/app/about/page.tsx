@@ -117,19 +117,19 @@ export default function AboutPage() {
         <div className="flex flex-wrap items-center gap-3 pt-2">
           <Link
             href="/topics/python-basics"
-            className="rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-brand/25 hover:bg-brand-dark transition-all"
+            className="btn-cyber btn-cyber-primary"
           >
             Start with Python Basics →
           </Link>
           <Link
             href="/"
-            className="rounded-xl border border-line bg-surface px-5 py-2.5 text-sm font-medium text-ink hover:bg-surface-hover transition-colors"
+            className="btn-cyber btn-cyber-secondary"
           >
             Explore 3D Home
           </Link>
           <Link
             href="/search?q=loop"
-            className="rounded-xl border border-line bg-surface px-5 py-2.5 text-sm font-medium text-muted hover:text-ink hover:bg-surface-hover transition-colors"
+            className="btn-cyber btn-cyber-secondary text-muted"
           >
             Search Curriculum
           </Link>
@@ -146,8 +146,8 @@ export default function AboutPage() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-2xl border border-line bg-surface p-6 shadow-xs">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-soft font-mono font-bold text-brand">
+          <div className="cyber-card p-6">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-soft border border-brand/30 font-mono font-bold text-brand">
               01
             </div>
             <h3 className="mt-4 text-base font-bold font-display text-ink">Bite-Sized Notes</h3>
@@ -156,8 +156,8 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-line bg-surface p-6 shadow-xs">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-soft font-mono font-bold text-brand">
+          <div className="cyber-card p-6">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-soft border border-brand/30 font-mono font-bold text-brand">
               02
             </div>
             <h3 className="mt-4 text-base font-bold font-display text-ink">In-Browser Editor</h3>
@@ -166,8 +166,8 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-line bg-surface p-6 shadow-xs">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-soft font-mono font-bold text-brand">
+          <div className="cyber-card p-6">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-soft border border-brand/30 font-mono font-bold text-brand">
               03
             </div>
             <h3 className="mt-4 text-base font-bold font-display text-ink">Instant Test Feedback</h3>
@@ -191,14 +191,14 @@ export default function AboutPage() {
           {architectures.map((item) => (
             <div
               key={item.title}
-              className="flex flex-col justify-between rounded-2xl border border-line bg-surface p-6 shadow-xs"
+              className="cyber-card cyber-card-accent p-6 flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between">
                   <span className="font-mono text-xs font-semibold uppercase tracking-wider text-muted">
                     {item.tag}
                   </span>
-                  <span className="rounded-full bg-brand-soft px-2.5 py-0.5 text-xs font-mono font-medium text-brand">
+                  <span className="pill-badge pill-badge-violet">
                     {item.badge}
                   </span>
                 </div>
@@ -211,9 +211,9 @@ export default function AboutPage() {
       </section>
 
       {/* Docker Sandbox & Security Model */}
-      <section className="rounded-2xl border border-line bg-surface p-6 md:p-8 shadow-xs space-y-6">
+      <section className="cyber-card p-6 md:p-8 space-y-6 backdrop-blur-md">
         <div>
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-ok/15 border border-ok/30 px-3 py-1 text-xs font-semibold text-ok font-mono">
+          <div className="pill-badge pill-badge-mint">
             🛡️ Isolated Sandbox Environment
           </div>
           <h2 className="mt-3 text-2xl font-bold font-display text-ink">How Code Runs Safely</h2>
@@ -224,7 +224,7 @@ export default function AboutPage() {
 
         <div className="grid gap-3 sm:grid-cols-2">
           {securityFeatures.map((feat) => (
-            <div key={feat.label} className="rounded-xl border border-line bg-surface-elevated/70 p-4">
+            <div key={feat.label} className="cyber-card p-4 border-line/80 bg-surface-elevated/70">
               <h4 className="font-semibold text-ink text-sm flex items-center gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-ok" />
                 {feat.label}
@@ -260,12 +260,12 @@ export default function AboutPage() {
           {curriculumTopics.map((topic) => (
             <div
               key={topic.name}
-              className="flex flex-col justify-between rounded-xl border border-line bg-surface p-5 shadow-xs"
+              className="cyber-card p-5 flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between">
                   <h3 className="font-bold text-ink text-sm">{topic.name}</h3>
-                  <span className="rounded-full bg-ok/15 text-ok border border-ok/30 px-2 py-0.5 text-[10px] font-mono font-semibold uppercase">
+                  <span className="pill-badge pill-badge-mint">
                     {topic.status}
                   </span>
                 </div>
@@ -275,7 +275,7 @@ export default function AboutPage() {
                 <div className="mt-4 pt-3 border-t border-line/60">
                   <Link
                     href={topic.href}
-                    className="text-xs font-semibold text-brand hover:underline inline-flex items-center gap-1"
+                    className="text-xs font-semibold text-brand hover:underline inline-flex items-center gap-1 font-mono"
                   >
                     <span>Jump into track</span>
                     <span>→</span>

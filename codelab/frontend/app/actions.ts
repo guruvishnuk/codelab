@@ -2,6 +2,11 @@
 
 import { runCode } from "@/lib/api";
 import { cookies } from "next/headers";
+import { signOut } from "@/auth";
+
+export async function signOutAction() {
+  await signOut({ redirectTo: "/" });
+}
 
 // This acts as a secure bridge. The browser will call this, 
 // and Next.js will magically run it on the server and return the result!
@@ -18,14 +23,11 @@ export async function submitCodeAction(exerciseId: number, code: string) {
   }
 }
 
-
 export async function createExerciseAction(topicId: number, data: any) {
-  // Grab the cookie (checking both normal and secure names)
   const cookieStore = cookies();
   const token = cookieStore.get("authjs.session-token")?.value || cookieStore.get("__Secure-authjs.session-token")?.value;
   
   const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
-  // Call the secure Admin endpoint
   const res = await fetch(`${BASE}/api/admin/topics/${topicId}/exercises`, {
     method: "POST",
     headers: {

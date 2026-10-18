@@ -16,20 +16,20 @@ export default async function SearchPage({
   const results = await searchEntities(q).catch(() => null);
 
   return (
-    <div className="max-w-3xl space-y-6">
+    <div className="max-w-4xl space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight font-display text-ink">Search Results</h1>
+        <h1 className="text-3xl font-bold tracking-tight font-display text-ink">Search Curriculum</h1>
         <p className="mt-2 text-sm text-muted">
           Showing matching tracks and exercises for: <span className="font-mono text-brand font-semibold">"{q}"</span>
         </p>
       </div>
 
       {results === null ? (
-        <div className="rounded-xl border border-bad/30 bg-bad/10 p-4 text-xs font-mono text-bad">
-          Search service is currently reconnecting. Please retry in a few moments.
+        <div className="cyber-card p-4 border-bad/30 bg-bad/10 text-xs font-mono text-bad">
+          ⚠️ Search service is currently reconnecting. Please retry in a few moments.
         </div>
       ) : results.topics.length === 0 && results.exercises.length === 0 ? (
-        <div className="rounded-2xl border border-line bg-surface p-8 text-center text-muted text-sm">
+        <div className="cyber-card p-8 text-center text-muted text-sm">
           No matches found for "{q}". Try searching for concepts like "loop", "string", "input", or "dictionary".
         </div>
       ) : (
@@ -37,15 +37,17 @@ export default async function SearchPage({
           {results.topics.length > 0 && (
             <section>
               <h2 className="text-lg font-bold font-display text-ink border-b border-line pb-2 mb-4 flex items-center gap-2">
-                <span>📚</span> Topics ({results.topics.length})
+                <span>📚</span> Tracks ({results.topics.length})
               </h2>
               <ul className="space-y-3">
                 {results.topics.map((t) => (
-                  <li key={t.slug} className="rounded-xl border border-line bg-surface p-4 hover:border-brand/60 hover:bg-surface-hover transition-all">
-                    <Link href={`/topics/${t.slug}`} className="block font-semibold text-ink hover:text-brand text-base transition-colors">
-                      {t.title}
+                  <li key={t.slug}>
+                    <Link href={`/topics/${t.slug}`} className="cyber-card p-4.5 block hover:border-brand/70 hover:shadow-glow transition-all">
+                      <span className="block font-semibold text-ink hover:text-brand text-base transition-colors">
+                        {t.title}
+                      </span>
+                      {t.summary && <p className="mt-1 text-xs text-muted leading-relaxed">{t.summary}</p>}
                     </Link>
-                    {t.summary && <p className="mt-1 text-xs text-muted leading-relaxed">{t.summary}</p>}
                   </li>
                 ))}
               </ul>
@@ -59,18 +61,20 @@ export default async function SearchPage({
               </h2>
               <ul className="space-y-3">
                 {results.exercises.map((e) => (
-                  <li key={e.id} className="rounded-xl border border-line bg-surface p-4 hover:border-brand/60 hover:bg-surface-hover transition-all">
-                    <div className="flex items-center justify-between">
-                      <Link href={`/exercises/${e.id}`} className="block font-semibold text-ink hover:text-brand transition-colors">
-                        {e.title}
-                      </Link>
-                      <span className="capitalize text-[11px] font-mono px-2 py-0.5 rounded border border-line bg-surface-elevated text-muted">
-                        {e.difficulty}
+                  <li key={e.id}>
+                    <Link href={`/exercises/${e.id}`} className="cyber-card p-4 flex items-center justify-between hover:border-brand/70 hover:shadow-glow transition-all">
+                      <div>
+                        <span className="block font-semibold text-ink hover:text-brand transition-colors text-sm">
+                          {e.title}
+                        </span>
+                        <div className="mt-1 text-xs text-muted font-mono">
+                          Topic: <span className="text-brand">{e.topic_slug}</span>
+                        </div>
+                      </div>
+                      <span className="pill-badge pill-badge-violet">
+                        {e.difficulty.toUpperCase()}
                       </span>
-                    </div>
-                    <div className="mt-1 text-xs text-muted font-mono">
-                      Topic: <span className="text-brand">{e.topic_slug}</span>
-                    </div>
+                    </Link>
                   </li>
                 ))}
               </ul>

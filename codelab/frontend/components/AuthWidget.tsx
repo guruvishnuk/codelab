@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { auth, signOut } from "@/auth";
+import { auth } from "@/auth";
+import { signOutAction } from "@/app/actions";
 
 export default async function AuthWidget() {
   const session = await auth();
@@ -27,12 +28,7 @@ export default async function AuthWidget() {
           </span>
           <span className="text-[10px] text-brand">⚡</span>
         </Link>
-        <form
-          action={async () => {
-            "use server";
-            await signOut({ redirectTo: "/" });
-          }}
-        >
+        <form action={signOutAction}>
           <button
             type="submit"
             className="rounded-lg border border-line/60 bg-surface/40 px-2.5 py-1 text-xs font-medium text-muted hover:text-bad hover:border-bad/40 transition-colors"
