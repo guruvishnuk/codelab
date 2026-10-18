@@ -5,17 +5,34 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        paper: "#F6F8FA",
-        ink: "#172033",
-        muted: "#5B6676",
-        line: "#D9E0E7",
-        brand: { DEFAULT: "#0F766E", dark: "#0B5B55", soft: "#E3F2F0" },
-        ok: "#067647",
-        bad: "#B42318",
+        paper: "#0f0b24",
+        surface: {
+          DEFAULT: "#181240",
+          elevated: "#221a55",
+          hover: "#261d5e",
+        },
+        ink: "#f1eeff",
+        muted: "#a29cc9",
+        line: "#2c2564",
+        brand: {
+          DEFAULT: "#8f7bff",
+          dark: "#745cfc",
+          soft: "rgba(143, 123, 255, 0.15)",
+        },
+        ok: "#4be3c3",
+        bad: "#ff5c77",
+        amber: {
+          DEFAULT: "#ffc857",
+        },
       },
       fontFamily: {
+        display: ["var(--font-display)", "sans-serif"],
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],
+      },
+      boxShadow: {
+        xs: "0 1px 3px rgba(0, 0, 0, 0.3)",
+        glow: "0 0 25px -5px rgba(143, 123, 255, 0.3)",
       },
     },
   },

@@ -15,14 +15,19 @@ export default function SearchInput() {
   };
 
   return (
-    <form onSubmit={onSubmit} className="px-5 pb-4">
-      <input 
-        type="search" 
-        value={q}
-        onChange={e => setQ(e.target.value)}
-        placeholder="Search topics and exercises..." 
-        className="w-full rounded-md border border-line px-3 py-1.5 text-sm outline-none focus:border-brand focus:ring-1 focus:ring-brand"
-      />
+    <form onSubmit={onSubmit} className="px-3 pb-3">
+      <div className="relative">
+        <input 
+          type="search" 
+          value={q}
+          onChange={e => setQ(e.target.value)}
+          placeholder="Search lessons & exercises..." 
+          className="w-full rounded-lg border border-line bg-surface/80 px-3 py-1.5 text-xs text-ink placeholder:text-muted outline-none focus:border-brand focus:ring-1 focus:ring-brand shadow-xs transition-all"
+        />
+        <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-muted pointer-events-none">
+          🔍
+        </span>
+      </div>
     </form>
   );
 }

@@ -10,7 +10,7 @@ export default function AdminPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setMessage("Saving...");
+    setMessage("Saving exercise to database...");
 
     try {
       // 1. Prepare the data
@@ -19,68 +19,77 @@ export default function AdminPage() {
         difficulty: "easy",
         prompt_md: "Write a function that does something cool.",
         starter_code: "# Start coding here\n",
-        test_cases: [{"input": "1\n", "expected": "1"}]
+        test_cases: [{ input: "1\n", expected: "1" }],
       };
 
       // 2. Send it securely via the Server Action
       await createExerciseAction(parseInt(topicId), exerciseData);
-      
+
       setMessage(`Success! "${title}" was added to the database.`);
       setTitle(""); // Clear the form
     } catch (err: any) {
-      setMessage(err.message);
+      setMessage(err.message || "Failed to create exercise.");
     }
   }
 
   return (
-    <div className="max-w-2xl py-8">
-      <h1 className="text-3xl font-bold text-ink mb-2">Admin Panel</h1>
-      <p className="text-muted mb-8">Add new exercises to the database visually.</p>
+    <div className="max-w-2xl py-2 space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold font-display text-ink mb-1">Curriculum Admin Portal</h1>
+        <p className="text-sm text-muted">Create and publish interactive Python exercises visually.</p>
+      </div>
 
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg border border-line space-y-4">
-        
+      <form onSubmit={handleSubmit} className="bg-surface p-6 md:p-8 rounded-2xl border border-line space-y-5 shadow-xs">
         {/* Topic Selector */}
         <div>
-          <label className="block text-sm font-medium text-ink mb-1">Select Topic</label>
+          <label className="block text-xs font-mono uppercase tracking-wider text-muted mb-2">
+            Select Track
+          </label>
           <select 
             value={topicId} 
             onChange={(e) => setTopicId(e.target.value)}
-            className="w-full border border-line rounded-md p-2"
+            className="w-full rounded-xl border border-line bg-surface-elevated px-4 py-2.5 text-sm text-ink outline-none focus:border-brand focus:ring-1 focus:ring-brand"
           >
-            <option value="1">Python Basics</option>
-            <option value="2">Control Flow</option>
-            <option value="3">Strings</option>
-            <option value="4">Functions & Scope</option>
-            <option value="5">Lists & Tuples</option>
-            <option value="6">Dictionaries & Sets</option>
+            <option value="1">1. Python Basics</option>
+            <option value="2">2. Control Flow</option>
+            <option value="3">3. Strings</option>
+            <option value="4">4. Functions & Scope</option>
+            <option value="5">5. Lists & Tuples</option>
+            <option value="6">6. Dictionaries & Sets</option>
           </select>
         </div>
 
         {/* Title Input */}
         <div>
-          <label className="block text-sm font-medium text-ink mb-1">Exercise Title</label>
+          <label className="block text-xs font-mono uppercase tracking-wider text-muted mb-2">
+            Exercise Title
+          </label>
           <input 
             type="text" 
             required
-            placeholder="e.g. Add Three Numbers"
+            placeholder="e.g. Calculate Fibonacci Sequence"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full border border-line rounded-md p-2"
+            className="w-full rounded-xl border border-line bg-surface-elevated px-4 py-2.5 text-sm text-ink placeholder:text-muted outline-none focus:border-brand focus:ring-1 focus:ring-brand"
           />
         </div>
 
         <button 
           type="submit" 
-          className="bg-brand text-white font-medium px-4 py-2 rounded-md hover:bg-brand-dark"
+          className="rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-dark shadow-sm shadow-brand/25 transition-all"
         >
-          Create Exercise
+          Publish Exercise →
         </button>
 
         {/* Status Message */}
         {message && (
-          <p className={`mt-4 text-sm font-bold ${message.includes("Success") ? "text-ok" : "text-bad"}`}>
+          <div className={`p-3.5 rounded-xl border text-xs font-mono ${
+            message.includes("Success") 
+              ? "border-ok/30 bg-ok/10 text-ok" 
+              : "border-bad/30 bg-bad/10 text-bad"
+          }`}>
             {message}
-          </p>
+          </div>
         )}
       </form>
     </div>

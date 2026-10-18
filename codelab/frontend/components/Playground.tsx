@@ -88,27 +88,39 @@ export default function Playground({
         Your Python code
       </label>
 
-      <div className="overflow-hidden rounded-md border border-line">
+      {/* Editor Box */}
+      <div className="overflow-hidden rounded-xl border border-line bg-[#0a0719] shadow-sm">
+        <div className="flex items-center justify-between border-b border-line/60 bg-surface/50 px-4 py-2 font-mono text-xs text-muted">
+          <div className="flex items-center gap-2">
+            <span className="h-2.5 w-2.5 rounded-full bg-bad/70" />
+            <span className="h-2.5 w-2.5 rounded-full bg-amber-500/70" />
+            <span className="h-2.5 w-2.5 rounded-full bg-ok/70" />
+            <span className="ml-2 text-ink/70">solution.py</span>
+          </div>
+          <span>Python 3.11</span>
+        </div>
+
         {!isLoaded ? (
-          <div className="h-[300px] w-full bg-ink/50 animate-pulse" />
+          <div className="h-[300px] w-full bg-[#0a0719] animate-pulse" />
         ) : (
           <CodeMirror
             value={code}
-            height="300px"
+            height="320px"
             theme="dark"
             extensions={[python()]}
             onChange={handleCodeChange}
-            className="text-sm"
+            className="text-sm font-mono"
           />
         )}
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+      {/* Actions and Latency Bar */}
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <button
             onClick={run}
             disabled={running}
-            className="inline-flex items-center gap-2 rounded-md bg-brand px-5 py-2 font-medium text-white hover:bg-brand-dark disabled:opacity-60 transition-colors shadow-xs"
+            className="inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-2 text-sm font-semibold text-white hover:bg-brand-dark disabled:opacity-60 transition-all shadow-sm shadow-brand/25"
           >
             {running ? (
               <>
@@ -123,7 +135,7 @@ export default function Playground({
           </button>
           <span
             title="Keyboard shortcut: Ctrl+Enter (Cmd+Enter on Mac)"
-            className="hidden sm:inline-flex items-center rounded border border-line bg-slate-100 dark:bg-slate-800 px-2 py-1 font-mono text-[11px] text-muted"
+            className="hidden sm:inline-flex items-center rounded-lg border border-line bg-surface/80 px-2 py-1 font-mono text-[11px] text-muted shadow-xs"
           >
             Ctrl+↵
           </span>
@@ -134,26 +146,31 @@ export default function Playground({
               setExecutionMs(null);
               localStorage.removeItem(draftKey);
             }}
-            className="rounded-md border border-line bg-white px-4 py-2 text-sm text-ink hover:bg-brand-soft transition-colors"
+            className="rounded-xl border border-line bg-surface px-4 py-2 text-sm font-medium text-ink hover:bg-surface-hover transition-colors"
           >
             Reset
           </button>
         </div>
 
         {executionMs !== null && (
-          <span className="inline-flex items-center gap-1 font-mono text-xs text-muted">
+          <span className="inline-flex items-center gap-1 font-mono text-xs text-muted bg-surface/80 border border-line px-2.5 py-1 rounded-lg">
             <span>⚡ Execution:</span>
-            <strong className="text-ink">{executionMs}ms</strong>
+            <strong className="text-brand">{executionMs}ms</strong>
           </span>
         )}
       </div>
 
-      {error && <p className="mt-4 text-bad">{error}</p>}
+      {error && (
+        <div className="mt-4 p-3.5 rounded-xl border border-bad/30 bg-bad/10 text-bad text-xs font-mono">
+          ⚠️ {error}
+        </div>
+      )}
 
+      {/* Results Terminal */}
       {result && (
         <div className="mt-6" aria-live="polite">
           {result.passed ? (
-            <div className="mb-4 rounded-lg border border-ok/30 bg-ok/10 p-4 text-ink shadow-sm">
+            <div className="mb-4 rounded-xl border border-ok/30 bg-ok/10 p-5 text-ink shadow-sm">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <h3 className="flex items-center gap-2 text-lg font-bold text-ok">
@@ -165,7 +182,7 @@ export default function Playground({
                     </p>
                   ) : (
                     <p className="mt-1 text-xs text-muted">
-                      Challenge solved. Progress saved!
+                      Challenge solved. Progress saved to profile!
                     </p>
                   )}
                 </div>
@@ -173,14 +190,15 @@ export default function Playground({
                 {nextExerciseId ? (
                   <a
                     href={`/exercises/${nextExerciseId}`}
-                    className="inline-flex items-center gap-1 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-dark transition-all"
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-dark transition-all"
                   >
-                    Next Challenge →
+                    <span>Next Challenge</span>
+                    <span>→</span>
                   </a>
                 ) : topicSlug ? (
                   <a
                     href={`/topics/${topicSlug}`}
-                    className="inline-flex items-center gap-1 rounded-md border border-line bg-white px-4 py-2 text-sm font-semibold text-ink shadow-sm hover:bg-brand-soft transition-all"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-line bg-surface px-4 py-2 text-sm font-semibold text-ink shadow-sm hover:bg-surface-hover transition-all"
                   >
                     Topic Complete! Notes →
                   </a>
@@ -188,8 +206,8 @@ export default function Playground({
               </div>
             </div>
           ) : (
-            <p className="text-lg font-semibold text-bad mb-3">
-              {result.results.filter((r) => r.passed).length} of {result.results.length} tests passed.
+            <p className="text-base font-semibold text-bad mb-3 flex items-center gap-2">
+              <span>✗</span> {result.results.filter((r) => r.passed).length} of {result.results.length} tests passed.
             </p>
           )}
 
@@ -197,7 +215,7 @@ export default function Playground({
             {result.results.map((r, i) => (
               <li
                 key={i}
-                className="rounded-md border border-line bg-white p-3 text-sm shadow-xs"
+                className="rounded-xl border border-line bg-surface/90 p-4 text-sm shadow-xs"
               >
                 <div className="flex items-center justify-between">
                   <p
@@ -205,26 +223,26 @@ export default function Playground({
                       r.passed ? "font-semibold text-ok" : "font-semibold text-bad"
                     }
                   >
-                    Test {i + 1}: {r.passed ? "passed" : "failed"}
+                    Test Case #{i + 1}: {r.passed ? "passed" : "failed"}
                   </p>
                   <span
                     className={`rounded px-2 py-0.5 text-[10px] font-bold uppercase ${
                       r.passed
-                        ? "bg-ok/10 text-ok"
-                        : "bg-bad/10 text-bad"
+                        ? "bg-ok/15 text-ok border border-ok/30"
+                        : "bg-bad/15 text-bad border border-bad/30"
                     }`}
                   >
                     {r.passed ? "✓ PASS" : "✗ FAIL"}
                   </span>
                 </div>
                 {!r.passed && (
-                  <dl className="mt-2 grid grid-cols-[80px_1fr] gap-x-3 gap-y-1 font-mono text-xs">
+                  <dl className="mt-3 grid grid-cols-[80px_1fr] gap-x-3 gap-y-1.5 font-mono text-xs bg-[#0a0719] p-3.5 rounded-xl border border-line/60">
                     <dt className="text-muted">Input</dt>
-                    <dd className="whitespace-pre-wrap">{r.input}</dd>
+                    <dd className="whitespace-pre-wrap text-ink">{r.input}</dd>
                     <dt className="text-muted">Expected</dt>
-                    <dd className="whitespace-pre-wrap">{r.expected}</dd>
+                    <dd className="whitespace-pre-wrap text-ok">{r.expected}</dd>
                     <dt className="text-muted">Got</dt>
-                    <dd className="whitespace-pre-wrap">
+                    <dd className="whitespace-pre-wrap text-bad">
                       {r.actual || "(nothing printed)"}
                     </dd>
                     {r.error && (
