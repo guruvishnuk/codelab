@@ -256,15 +256,24 @@ export default async function ProfilePage() {
               <li key={ex.id}>
                 <Link
                   href={`/exercises/${ex.id}`}
-                  className="cyber-card p-4 flex items-center justify-between hover:border-brand hover:shadow-glow transition-all"
+                  className="cyber-card group p-4 sm:p-5 flex items-center justify-between gap-4 hover:border-brand/70 hover:shadow-[0_12px_36px_-10px_rgba(143,123,255,0.3)] transition-all"
                 >
-                  <div>
-                    <span className="font-semibold text-ink block text-sm">{ex.title}</span>
-                    <span className="text-xs text-muted font-mono uppercase tracking-wider">
-                      {ex.topic_slug}
-                    </span>
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <div className="shrink-0 flex items-center justify-center w-10 h-10 rounded-xl bg-ok/15 border border-ok/40 text-ok font-mono text-sm font-bold shadow-[0_0_15px_rgba(75,227,195,0.2)]">
+                      <svg className="w-5 h-5 text-ok" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div className="min-w-0">
+                      <span className="font-bold text-ink group-hover:text-brand transition-colors block text-sm sm:text-base font-display truncate">
+                        {ex.title}
+                      </span>
+                      <span className="text-xs text-muted font-mono uppercase tracking-wider">
+                        Track: <span className="text-brand">{ex.topic_slug}</span>
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2.5 shrink-0">
                     <span
                       className={`pill-badge ${
                         ex.difficulty === "easy"
@@ -279,6 +288,11 @@ export default async function ProfilePage() {
                     <span className="pill-badge pill-badge-mint">
                       ✓ Solved
                     </span>
+                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-surface-elevated border border-line text-muted group-hover:bg-brand group-hover:border-brand group-hover:text-white transition-all">
+                      <svg className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      </svg>
+                    </div>
                   </div>
                 </Link>
               </li>

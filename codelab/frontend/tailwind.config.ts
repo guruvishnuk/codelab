@@ -34,6 +34,9 @@ const config: Config = {
         xs: "0 1px 3px rgba(0, 0, 0, 0.3)",
         glow: "0 0 25px -5px rgba(143, 123, 255, 0.3)",
       },
+      spacing: {
+        "4.5": "1.125rem",
+      },
     },
   },
   plugins: [require("@tailwindcss/typography")],

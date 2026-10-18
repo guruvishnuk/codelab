@@ -87,49 +87,85 @@ export default async function TopicPage({ params }: { params: { slug: string } }
           </span>
         </div>
 
-        <ul className="space-y-3">
-          {topic.exercises.map((ex) => (
+        <ul className="space-y-3.5">
+          {topic.exercises.map((ex, index) => (
             <li key={ex.id}>
               <Link
                 href={`/exercises/${ex.id}`}
-                className="group flex items-center justify-between rounded-2xl border border-line bg-surface/80 p-4.5 hover:border-brand/70 hover:bg-surface-hover hover:shadow-glow transition-all"
+                className="cyber-card group relative flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4.5 sm:p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-brand/70 hover:shadow-[0_12px_36px_-10px_rgba(143,123,255,0.3)]"
               >
-                <div className="flex items-center gap-3.5">
-                  <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand-soft border border-brand/30 font-mono text-xs font-bold text-brand group-hover:scale-105 transition-transform">
-                    {ex.id}
-                  </span>
-                  <div>
-                    <span className="font-semibold text-ink group-hover:text-brand transition-colors text-sm md:text-base block">
-                      {ex.title}
-                    </span>
-                    <span className="text-xs text-muted">Test-driven problem statement & editor</span>
+                {/* Left hover accent glow line */}
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-brand via-brand to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-l-2xl" />
+
+                <div className="flex items-center gap-4 min-w-0">
+                  {/* Dedicated challenge number badge with futuristic styling */}
+                  <div
+                    className={`relative shrink-0 flex items-center justify-center w-11 h-11 rounded-xl font-mono text-sm font-bold transition-all duration-300 ${
+                      ex.solved
+                        ? "bg-ok/15 border border-ok/40 text-ok shadow-[0_0_15px_rgba(75,227,195,0.25)]"
+                        : "bg-surface-elevated/90 border border-brand/30 text-brand shadow-inner group-hover:bg-brand group-hover:text-white group-hover:border-brand group-hover:shadow-[0_0_20px_rgba(143,123,255,0.45)] group-hover:scale-105"
+                    }`}
+                  >
+                    {ex.solved ? (
+                      <svg className="w-5 h-5 text-ok" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    ) : (
+                      <span>{String(index + 1).padStart(2, "0")}</span>
+                    )}
+                  </div>
+
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-bold text-ink group-hover:text-brand transition-colors text-sm sm:text-base font-display truncate">
+                        {ex.title}
+                      </h3>
+                      {ex.solved && (
+                        <span className="hidden sm:inline-block text-[11px] font-mono text-ok font-semibold">
+                          ✓ Solved
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted/90 mt-0.5 line-clamp-1 flex items-center gap-2">
+                      <span>Test-driven runner</span>
+                      <span className="text-line">•</span>
+                      <span className="font-mono text-[11px] text-muted/60">Python 3.11</span>
+                    </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  {ex.solved ? (
-                    <span className="rounded-full border border-ok/30 bg-ok/15 px-3 py-0.5 text-[11px] font-bold uppercase font-mono text-ok">
-                      ✓ Solved
+                {/* Right metadata and interactive action pill */}
+                <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-line/40">
+                  <div className="flex items-center gap-2.5">
+                    {ex.solved ? (
+                      <span className="pill-badge pill-badge-mint">
+                        ✓ +{ex.difficulty === "easy" ? "50" : "100"} XP EARNED
+                      </span>
+                    ) : (
+                      <span className="pill-badge pill-badge-amber">
+                        ⚡ +{ex.difficulty === "easy" ? "50" : "100"} XP
+                      </span>
+                    )}
+
+                    <span
+                      className={`pill-badge ${
+                        ex.difficulty === "easy"
+                          ? "pill-badge-mint"
+                          : ex.difficulty === "medium"
+                          ? "pill-badge-amber"
+                          : "pill-badge-coral"
+                      }`}
+                    >
+                      {ex.difficulty.toUpperCase()}
                     </span>
-                  ) : (
-                    <span className="hidden sm:inline text-xs font-mono text-muted group-hover:text-ink">
-                      +{ex.difficulty === "easy" ? "50" : "100"} XP
-                    </span>
-                  )}
-                  <span
-                    className={`rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase font-mono ${
-                      ex.difficulty === "easy"
-                        ? "border border-ok/30 bg-ok/10 text-ok"
-                        : ex.difficulty === "medium"
-                        ? "border border-amber-500/30 bg-amber-500/15 text-amber-300"
-                        : "border border-bad/30 bg-bad/10 text-bad"
-                    }`}
-                  >
-                    {ex.difficulty}
-                  </span>
-                  <span className="text-muted group-hover:text-brand font-mono text-sm transition-transform group-hover:translate-x-1">
-                    →
-                  </span>
+                  </div>
+
+                  {/* Interactive cyber action arrow */}
+                  <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-surface-elevated border border-line text-muted group-hover:bg-brand group-hover:border-brand group-hover:text-white group-hover:shadow-[0_0_15px_rgba(143,123,255,0.4)] transition-all duration-300 shrink-0">
+                    <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                  </div>
                 </div>
               </Link>
             </li>
