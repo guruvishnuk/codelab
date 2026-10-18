@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import ReactMarkdown from "react-markdown";
 import { getTopic } from "@/lib/api";
 import { getTopicFallback } from "@/lib/fallback";
+import TopicDeepDive from "@/components/TopicDeepDive";
 
 export default async function TopicPage({ params }: { params: { slug: string } }) {
   let topic = await getTopic(params.slug).catch(() => null);
@@ -58,20 +58,8 @@ export default async function TopicPage({ params }: { params: { slug: string } }
         </div>
       </div>
 
-      {/* Concept Notes Card with Cyber Accent */}
-      <div className="cyber-card cyber-card-accent p-6 md:p-8 backdrop-blur-md">
-        <div className="mb-5 flex items-center justify-between border-b border-line/60 pb-3">
-          <span className="font-mono text-xs font-semibold uppercase tracking-wider text-muted flex items-center gap-2">
-            <span>📖</span> Core Concept Notes
-          </span>
-          <span className="text-xs text-muted font-mono bg-surface-elevated px-2.5 py-0.5 rounded-full border border-line">
-            Python 3.11
-          </span>
-        </div>
-        <div className="notes">
-          <ReactMarkdown>{topic.notes_md}</ReactMarkdown>
-        </div>
-      </div>
+      {/* Interactive Concept Notes & Deep Dive with Multilingual and Level Support */}
+      <TopicDeepDive slug={topic.slug} fallbackNotes={topic.notes_md} />
 
       {/* Hands-on Challenges Section */}
       <div className="pt-2 space-y-4">

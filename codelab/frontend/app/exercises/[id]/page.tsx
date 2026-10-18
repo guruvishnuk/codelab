@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import ReactMarkdown from "react-markdown";
 import { getExercise } from "@/lib/api";
 import { getExerciseFallback } from "@/lib/fallback";
 import Playground from "@/components/Playground";
+import ExercisePrompt from "@/components/ExercisePrompt";
 
 export default async function ExercisePage({ params }: { params: { id: string } }) {
   let ex = await getExercise(params.id).catch(() => null);
@@ -58,37 +58,13 @@ export default async function ExercisePage({ params }: { params: { id: string } 
 
       {/* Main Workspace: Instructions & Playground */}
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1.8fr)] items-start">
-        {/* Left: Challenge Prompt & Instructions */}
-        <div className="space-y-4">
-          <div className="cyber-card cyber-card-accent p-6 backdrop-blur-md">
-            <div className="mb-4 flex items-center justify-between border-b border-line/60 pb-3">
-              <span className="font-mono text-xs font-semibold uppercase tracking-wider text-muted flex items-center gap-2">
-                <span>📝</span> Problem Statement
-              </span>
-              <span className="text-[11px] text-muted font-mono bg-surface-elevated px-2 py-0.5 rounded border border-line">
-                Python 3.11
-              </span>
-            </div>
-            <div className="notes">
-              <ReactMarkdown>{ex.prompt_md}</ReactMarkdown>
-            </div>
-          </div>
-
-          {/* Socratic Pro-Tip Card */}
-          <div className="cyber-card p-4.5 border-brand/30 bg-surface/60 space-y-2">
-            <div className="flex items-center gap-2 text-xs font-semibold text-brand font-mono">
-              <span>⚡</span>
-              <span>Pro Tip & Keybindings</span>
-            </div>
-            <p className="text-xs text-muted leading-relaxed">
-              Write your function in the CodeMirror editor. Use{" "}
-              <kbd className="rounded border border-line bg-surface-elevated px-1.5 py-0.5 font-mono text-[10px] text-brand">
-                Ctrl + Enter
-              </kbd>{" "}
-              (or <kbd className="rounded border border-line bg-surface-elevated px-1.5 py-0.5 font-mono text-[10px] text-brand">⌘ + Enter</kbd>) to trigger instant automated test evaluation.
-            </p>
-          </div>
-        </div>
+        {/* Left: Interactive Multilingual Challenge Prompt & Instructions */}
+        <ExercisePrompt
+          exerciseId={ex.id}
+          defaultTitle={ex.title}
+          defaultPromptMd={ex.prompt_md}
+          difficulty={ex.difficulty}
+        />
 
         {/* Right: CodeMirror Sandbox & Output Terminal */}
         <div className="cyber-card p-5 backdrop-blur-md">
