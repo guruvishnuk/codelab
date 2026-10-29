@@ -8,6 +8,15 @@ import subprocess
 TIMEOUT_SECONDS = 5
 
 def _run_local(code: str, stdin: str) -> tuple[str, str]:
+    """Execute Python code locally via subprocess with a timeout limit.
+
+    Args:
+        code: Python source code string to execute.
+        stdin: Input string passed to the process standard input.
+
+    Returns:
+        tuple[str, str]: Stripped stdout and stderr strings.
+    """
     try:
         proc = subprocess.run(
             [sys.executable, "-c", code],
@@ -20,7 +29,21 @@ def _run_local(code: str, stdin: str) -> tuple[str, str]:
     except subprocess.TimeoutExpired:
         return "", f"Time limit exceeded ({TIMEOUT_SECONDS}s)"
 
+
 def run_python(code: str, stdin: str) -> tuple[str, str]:
+    """Execute Python code inside an isolated Docker sandbox with local fallback.
+
+    Applies memory (128MB), CPU (0.5), and network isolation (--net none) when
+    USE_DOCKER_SANDBOX is enabled. Falls back gracefully to local subprocess if
+    Docker is unavailable or daemon is offline.
+
+    Args:
+        code: Python source code string to execute.
+        stdin: Input string passed to the process standard input.
+
+    Returns:
+        tuple[str, str]: Stripped stdout and stderr strings.
+    """
     use_docker = os.getenv("USE_DOCKER_SANDBOX", "true").lower() in ("true", "1")
 
     if use_docker:
