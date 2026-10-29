@@ -181,13 +181,23 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 🧪 Running Tests
+## 🧪 Running Tests & Quality Checks
 
+### Backend Tests
 The backend includes a comprehensive automated test suite verifying API routes, exercise runners, and auth validation:
 
 ```bash
 cd codelab/backend
 pytest
+```
+
+### Frontend Typecheck & Linting
+Validate TypeScript types and frontend code quality:
+
+```bash
+cd codelab/frontend
+npm run typecheck
+npm run lint
 ```
 
 ---
