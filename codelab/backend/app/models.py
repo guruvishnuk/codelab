@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import ForeignKey, JSON, Text, String, DateTime, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .database import Base
@@ -57,6 +57,6 @@ class Submission(Base):
     exercise_id: Mapped[int] = mapped_column(ForeignKey("exercises.id"))
     code: Mapped[str] = mapped_column(Text)
     passed: Mapped[bool] = mapped_column(default=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     user: Mapped[User] = relationship(back_populates="submissions")
