@@ -127,6 +127,21 @@ flowchart TD
 
 ---
 
+## 📡 API Endpoints Reference
+
+| Method | Endpoint | Description | Auth Required |
+|---|---|---|:---:|
+| `GET` | `/api/health` | Service operational health status check | No |
+| `GET` | `/api/topics` | List all curriculum topics ordered by progression | No |
+| `GET` | `/api/topics/{slug}` | Detailed notes and exercise checklist for a topic | Optional |
+| `GET` | `/api/exercises/{id}` | Exercise prompt, starter code, and next exercise reference | No |
+| `POST` | `/api/exercises/{id}/run` | Execute Python code against test cases in sandbox | Optional |
+| `GET` | `/api/search?q={query}` | Search topics and exercises by keyword query | No |
+| `GET` | `/api/users/me/dashboard` | User XP, active streaks, level rank, and unlocked badges | Yes |
+| `POST` | `/api/admin/topics/{id}/exercises` | Admin route to append new exercise to curriculum | Yes (Admin) |
+
+---
+
 ## ⚡ Quick Start (Local Development)
 
 ### Prerequisites
