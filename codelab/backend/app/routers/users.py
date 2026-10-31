@@ -1,7 +1,6 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from sqlalchemy import func
 from ..database import get_db
 from ..models import Exercise, Submission, User
 from ..schemas import (
@@ -24,10 +23,16 @@ LEVEL_TIERS = [
 ]
 
 
-@router.get("/me/dashboard", response_model=DashboardResponse)
+@router.get(
+    "/me/dashboard",
+    response_model=DashboardResponse,
+    summary="Get user dashboard analytics",
+    description="Retrieve personal learning progress, XP points, current level rank, streak days, and achievement badges.",
+)
 def get_dashboard(
     db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
 ):
+    """Aggregate statistics, gamification levels, active streaks, and milestone badges for the logged in user."""
     total_exercises = db.query(Exercise).count()
 
     # Unique solved exercises
@@ -53,8 +58,8 @@ def get_dashboard(
         .order_by(Submission.created_at.desc())
         .all()
     )
-    distinct_dates = sorted({s[0].date() for s in passed_subs}, reverse=True)
-    today = datetime.utcnow().date()
+    distinct_dates = sorted({s[0].date() for s in passed_subs if s[0] is not None}, reverse=True)
+    today = datetime.now(timezone.utc).date()
     streak_days = 0
     if distinct_dates:
         if distinct_dates[0] == today or distinct_dates[0] == (today - timedelta(days=1)):
