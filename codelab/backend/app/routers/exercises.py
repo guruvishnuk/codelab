@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models import Exercise, Submission, User
@@ -9,50 +9,68 @@ from ..auth import get_optional_current_user
 router = APIRouter(prefix="/api/exercises", tags=["exercises"])
 
 
-@router.get("/{exercise_id}", response_model=ExerciseDetail)
+@router.get(
+    "/{exercise_id}",
+    response_model=ExerciseDetail,
+    summary="Get exercise details",
+    description="Retrieve prompt, starter code, and next exercise reference for a specific exercise.",
+)
 def get_exercise(exercise_id: int, db: Session = Depends(get_db)):
+    """Fetch complete exercise details and instructions by ID."""
     ex = db.get(Exercise, exercise_id)
     if not ex:
-        raise HTTPException(404, "Exercise not found")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Exercise not found")
     return ExerciseDetail(
-        id=ex.id, title=ex.title, difficulty=ex.difficulty,
-        prompt_md=ex.prompt_md, starter_code=ex.starter_code,
+        id=ex.id,
+        title=ex.title,
+        difficulty=ex.difficulty,
+        prompt_md=ex.prompt_md,
+        starter_code=ex.starter_code,
         topic_slug=ex.topic.slug,
         next_exercise_id=_next_exercise_id(db, ex),
     )
 
 
 def _next_exercise_id(db: Session, current: Exercise) -> int | None:
-    """Return the id of the next exercise in the same topic, or None."""
+    """Return the id of the next exercise in the same topic, or None if last."""
     next_ex = (
         db.query(Exercise)
-        .filter(Exercise.topic_id == current.topic_id,
-                Exercise.position > current.position)
+        .filter(Exercise.topic_id == current.topic_id, Exercise.position > current.position)
         .order_by(Exercise.position)
         .first()
     )
     return next_ex.id if next_ex else None
 
 
-@router.post("/{exercise_id}/run", response_model=RunResponse)
+@router.post(
+    "/{exercise_id}/run",
+    response_model=RunResponse,
+    summary="Execute Python code against test cases",
+    description="Run user submitted Python code against test cases in an isolated subprocess sandbox.",
+)
 def run_exercise(
-    exercise_id: int, 
-    body: RunRequest, 
+    exercise_id: int,
+    body: RunRequest,
     db: Session = Depends(get_db),
-    current_user: User | None = Depends(get_optional_current_user)
+    current_user: User | None = Depends(get_optional_current_user),
 ):
+    """Execute code against test cases, evaluate pass/fail, and award XP if logged in."""
     ex = db.get(Exercise, exercise_id)
     if not ex:
-        raise HTTPException(404, "Exercise not found")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Exercise not found")
 
     results = []
     for case in ex.test_cases:
         out, err = run_python(body.code, case["input"])
-        results.append(TestResult(
-            passed=(not err and out == case["expected"].strip()),
-            input=case["input"], expected=case["expected"],
-            actual=out, error=err,
-        ))
+        results.append(
+            TestResult(
+                passed=(not err and out == case["expected"].strip()),
+                input=case["input"],
+                expected=case["expected"],
+                actual=out,
+                error=err,
+            )
+        )
 
     all_passed = all(r.passed for r in results)
 
@@ -73,14 +91,16 @@ def run_exercise(
             diff_xp = {"easy": 50, "medium": 100, "hard": 200}
             xp_earned = diff_xp.get(ex.difficulty.lower(), 50)
 
-    # If user is logged in, save their progress in the database!
+    # If user is logged in, save their progress in the database
     if current_user:
-        db.add(Submission(
-            exercise_id=ex.id, 
-            user_id=current_user.id, 
-            code=body.code, 
-            passed=all_passed
-        ))
+        db.add(
+            Submission(
+                exercise_id=ex.id,
+                user_id=current_user.id,
+                code=body.code,
+                passed=all_passed,
+            )
+        )
         db.commit()
 
     return RunResponse(
