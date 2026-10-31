@@ -124,3 +124,22 @@ def test_run_celsius_to_fahrenheit_code(client, auth_headers):
     data = res.json()
     assert data["passed"] is True
     assert all(r["passed"] for r in data["results"])
+
+def test_exercise_not_found(client):
+    res = client.get("/api/exercises/999999")
+    assert res.status_code == 404
+
+def test_topic_not_found(client):
+    res = client.get("/api/topics/non-existent-topic-slug")
+    assert res.status_code == 404
+
+def test_search_empty_query(client):
+    res = client.get("/api/search?q=")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["topics"] == []
+    assert data["exercises"] == []
+
+def test_unauthorized_dashboard_access(client):
+    res = client.get("/api/users/me/dashboard")
+    assert res.status_code == 401
