@@ -2,34 +2,51 @@ import { cookies } from "next/headers";
 
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
-// Helper to get the JWT token from the NextAuth cookies
-function getAuthHeaders() {
+/**
+ * Extract JWT session token from cookies to authenticate requests against FastAPI backend.
+ */
+function getAuthHeaders(): Record<string, string> {
   const cookieStore = cookies();
   // Auth.js names the cookie differently depending on if it's localhost or HTTPS (production)
-  const token = cookieStore.get("authjs.session-token")?.value || cookieStore.get("__Secure-authjs.session-token")?.value;
-  
+  const token =
+    cookieStore.get("authjs.session-token")?.value ||
+    cookieStore.get("__Secure-authjs.session-token")?.value;
+
   const headers: Record<string, string> = {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
   };
-  
+
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }
   return headers;
 }
 
-export type TopicSummary = { slug: string; title: string; summary: string };
-export type ExerciseSummary = { id: number; title: string; difficulty: string; solved: boolean };
+export type TopicSummary = {
+  slug: string;
+  title: string;
+  summary: string;
+};
+
+export type ExerciseSummary = {
+  id: number;
+  title: string;
+  difficulty: string;
+  solved: boolean;
+};
+
 export type TopicDetail = TopicSummary & {
   notes_md: string;
   exercises: ExerciseSummary[];
 };
+
 export type ExerciseDetail = ExerciseSummary & {
   prompt_md: string;
   starter_code: string;
   topic_slug: string;
   next_exercise_id: number | null;
 };
+
 export type TestResult = {
   passed: boolean;
   input: string;
@@ -37,6 +54,7 @@ export type TestResult = {
   actual: string;
   error: string;
 };
+
 export type RunResponse = {
   passed: boolean;
   results: TestResult[];
@@ -44,19 +62,38 @@ export type RunResponse = {
   is_first_solve?: boolean;
 };
 
+/**
+ * Generic fetch wrapper with auth header injection and error handling.
+ */
 async function get<T>(path: string): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, { 
+  const res = await fetch(`${BASE}${path}`, {
     cache: "no-store",
-    headers: getAuthHeaders()
+    headers: getAuthHeaders(),
   });
-  if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+  if (!res.ok) {
+    throw new Error(`Request failed with status ${res.status}`);
+  }
   return res.json();
 }
 
-export const getTopics = () => get<TopicSummary[]>("/api/topics");
-export const getTopic = (slug: string) => get<TopicDetail>(`/api/topics/${slug}`);
-export const getExercise = (id: string) => get<ExerciseDetail>(`/api/exercises/${id}`);
+/**
+ * Fetch all available curriculum topics ordered by position.
+ */
+export const getTopics = (): Promise<TopicSummary[]> => get<TopicSummary[]>("/api/topics");
 
+/**
+ * Fetch complete details and exercises for a given topic slug.
+ */
+export const getTopic = (slug: string): Promise<TopicDetail> => get<TopicDetail>(`/api/topics/${slug}`);
+
+/**
+ * Fetch an individual exercise by ID including starter code and tests.
+ */
+export const getExercise = (id: string | number): Promise<ExerciseDetail> => get<ExerciseDetail>(`/api/exercises/${id}`);
+
+/**
+ * Submit user code to the backend runner to execute against test cases.
+ */
 export async function runCode(id: number, code: string): Promise<RunResponse> {
   const res = await fetch(`${BASE}/api/exercises/${id}/run`, {
     method: "POST",
@@ -115,11 +152,18 @@ export type DashboardResponse = {
   recent_solved: DashboardExercise[];
 };
 
-export const getDashboard = () => get<DashboardResponse>("/api/users/me/dashboard");
+/**
+ * Retrieve user profile analytics, XP points, rank and achievement badges.
+ */
+export const getDashboard = (): Promise<DashboardResponse> => get<DashboardResponse>("/api/users/me/dashboard");
 
 export type SearchResult = {
   topics: TopicSummary[];
   exercises: (ExerciseSummary & { topic_slug: string })[];
 };
 
-export const searchEntities = (q: string) => get<SearchResult>(`/api/search?q=${encodeURIComponent(q)}`);
+/**
+ * Search topics and exercises matching the search keyword.
+ */
+export const searchEntities = (q: string): Promise<SearchResult> =>
+  get<SearchResult>(`/api/search?q=${encodeURIComponent(q)}`);
