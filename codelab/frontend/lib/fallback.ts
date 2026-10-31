@@ -283,3 +283,25 @@ export function getTopicFallback(slug: string): TopicDetail | null {
 export function getExerciseFallback(id: string | number): ExerciseDetail | null {
   return FALLBACK_EXERCISE_DETAILS[String(id)] || null;
 }
+
+/**
+ * Check whether offline/fallback content exists for a given topic slug.
+ */
+export function hasTopicFallback(slug: string): boolean {
+  return slug in FALLBACK_TOPIC_DETAILS;
+}
+
+/**
+ * Check whether offline/fallback content exists for a given exercise ID.
+ */
+export function hasExerciseFallback(id: string | number): boolean {
+  return String(id) in FALLBACK_EXERCISE_DETAILS;
+}
+
+/**
+ * List all topic slugs available in the offline fallback cache.
+ */
+export function getFallbackTopicSlugs(): string[] {
+  return Object.keys(FALLBACK_TOPIC_DETAILS);
+}
+
