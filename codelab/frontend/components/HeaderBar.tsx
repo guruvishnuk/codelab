@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -12,6 +12,16 @@ interface HeaderBarProps {
 export default function HeaderBar({ children, authSlot }: HeaderBarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
+
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape" && mobileOpen) {
+        setMobileOpen(false);
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [mobileOpen]);
 
   function getBreadcrumb() {
     if (pathname === "/") return "Overview";
@@ -41,6 +51,8 @@ export default function HeaderBar({ children, authSlot }: HeaderBarProps) {
             onClick={() => setMobileOpen(!mobileOpen)}
             className="md:hidden flex h-9 w-9 items-center justify-center rounded-xl border border-line bg-surface text-ink hover:border-brand transition-colors"
             aria-label="Toggle navigation menu"
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-navigation-drawer"
           >
             <span className="text-sm">{mobileOpen ? "✕" : "☰"}</span>
           </button>
