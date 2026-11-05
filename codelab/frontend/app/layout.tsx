@@ -11,8 +11,41 @@ const display = Unbounded({ subsets: ["latin"], weight: ["400", "700", "900"], v
 const mono = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "600"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
-  title: "CodeLab — Interactive 3D Coding & Assessment Platform",
-  description: "Learn to code topic by topic. Read concise notes, then write and test code in your browser.",
+  metadataBase: new URL("https://codelab-amber.vercel.app"),
+  title: {
+    default: "CodeLab — Interactive 3D Coding & Assessment Platform",
+    template: "%s | CodeLab",
+  },
+  description:
+    "Learn to code topic by topic with interactive notes, real-time code execution, and automated test evaluations.",
+  keywords: [
+    "coding",
+    "python",
+    "learn to code",
+    "programming challenges",
+    "interactive playground",
+    "algorithms",
+  ],
+  authors: [{ name: "CodeLab Team" }],
+  openGraph: {
+    title: "CodeLab — Interactive 3D Coding & Assessment Platform",
+    description:
+      "Learn to code topic by topic with interactive notes, real-time code execution, and automated test evaluations.",
+    url: "https://codelab-amber.vercel.app",
+    siteName: "CodeLab",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CodeLab — Interactive Coding Platform",
+    description:
+      "Topic-by-topic interactive lessons, browser-based sandbox execution, and automated test evaluations.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
