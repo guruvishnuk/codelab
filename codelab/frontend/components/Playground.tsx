@@ -26,6 +26,17 @@ export default function Playground({
   const [error, setError] = useState("");
   const [running, setRunning] = useState(false);
   const [executionMs, setExecutionMs] = useState<number | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  async function handleCopyCode() {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Fallback or ignore
+    }
+  }
 
   useEffect(() => {
     const savedDraft = localStorage.getItem(draftKey);
@@ -97,7 +108,17 @@ export default function Playground({
             <span className="h-2.5 w-2.5 rounded-full bg-ok/70" />
             <span className="ml-2 text-ink/70">solution.py</span>
           </div>
-          <span>Python 3.11</span>
+          <div className="flex items-center gap-3">
+            <span>Python 3.11</span>
+            <button
+              type="button"
+              onClick={handleCopyCode}
+              className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] text-muted hover:text-ink hover:bg-surface/80 transition-colors"
+              title="Copy code to clipboard"
+            >
+              {copied ? "✓ Copied" : "Copy"}
+            </button>
+          </div>
         </div>
 
         {!isLoaded ? (
