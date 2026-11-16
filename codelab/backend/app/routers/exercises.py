@@ -1,12 +1,38 @@
+import time
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models import Exercise, Submission, User
-from ..schemas import ExerciseDetail, RunRequest, RunResponse, TestResult
+from ..schemas import (
+    CustomRunRequest,
+    CustomRunResponse,
+    ExerciseDetail,
+    RunRequest,
+    RunResponse,
+    TestResult,
+)
 from ..runner import run_python
 from ..auth import get_optional_current_user
 
 router = APIRouter(prefix="/api/exercises", tags=["exercises"])
+
+
+@router.post(
+    "/run-custom",
+    response_model=CustomRunResponse,
+    summary="Execute Python code with custom stdin",
+    description="Execute arbitrary Python code with custom stdin in an isolated sandbox and return stdout/stderr with execution timing.",
+)
+def run_custom_code(body: CustomRunRequest):
+    """Execute code with custom stdin and measure execution duration in milliseconds."""
+    start_time = time.perf_counter()
+    out, err = run_python(body.code, body.stdin)
+    duration_ms = int((time.perf_counter() - start_time) * 1000)
+    return CustomRunResponse(
+        stdout=out,
+        stderr=err,
+        execution_time_ms=duration_ms,
+    )
 
 
 @router.get(

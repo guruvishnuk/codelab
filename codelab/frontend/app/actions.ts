@@ -1,6 +1,6 @@
 "use server";
 
-import { runCode } from "@/lib/api";
+import { runCode, runCustomCode } from "@/lib/api";
 import { cookies } from "next/headers";
 import { signOut } from "@/auth";
 
@@ -19,6 +19,20 @@ export async function submitCodeAction(exerciseId: number, code: string) {
       passed: false,
       results: [],
       error: err?.message || "Failed to execute code against backend.",
+    };
+  }
+}
+
+export async function runCustomCodeAction(code: string, stdin: string) {
+  try {
+    const res = await runCustomCode(code, stdin);
+    return { ...res, error: undefined };
+  } catch (err: any) {
+    return {
+      stdout: "",
+      stderr: err?.message || "Failed to execute custom code against backend.",
+      execution_time_ms: 0,
+      error: err?.message || "Failed to execute custom code against backend.",
     };
   }
 }

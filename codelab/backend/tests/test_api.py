@@ -143,3 +143,27 @@ def test_search_empty_query(client):
 def test_unauthorized_dashboard_access(client):
     res = client.get("/api/users/me/dashboard")
     assert res.status_code == 401
+
+
+def test_run_custom_code_success(client):
+    code = "a = int(input())\nb = int(input())\nprint(a + b)"
+    res = client.post(
+        "/api/exercises/run-custom",
+        json={"code": code, "stdin": "15\n25"},
+    )
+    assert res.status_code == 200
+    data = res.json()
+    assert data["stdout"] == "40"
+    assert data["stderr"] == ""
+    assert data["execution_time_ms"] >= 0
+
+
+def test_run_custom_code_runtime_error(client):
+    code = "print(1 / 0)"
+    res = client.post(
+        "/api/exercises/run-custom",
+        json={"code": code, "stdin": ""},
+    )
+    assert res.status_code == 200
+    data = res.json()
+    assert "ZeroDivisionError" in data["stderr"]

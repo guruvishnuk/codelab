@@ -62,6 +62,12 @@ export type RunResponse = {
   is_first_solve?: boolean;
 };
 
+export type CustomRunResponse = {
+  stdout: string;
+  stderr: string;
+  execution_time_ms: number;
+};
+
 /**
  * Generic fetch wrapper with auth header injection and error handling.
  */
@@ -102,6 +108,28 @@ export async function runCode(id: number, code: string): Promise<RunResponse> {
   });
   if (!res.ok) {
     let detail = "Could not run your code. Are you logged in?";
+    try {
+      const errData = await res.json();
+      detail = errData.detail || errData.message || detail;
+    } catch {
+      detail = `Server returned status ${res.status}`;
+    }
+    throw new Error(detail);
+  }
+  return res.json();
+}
+
+/**
+ * Execute arbitrary Python code with custom standard input against the backend sandbox.
+ */
+export async function runCustomCode(code: string, stdin: string): Promise<CustomRunResponse> {
+  const res = await fetch(`${BASE}/api/exercises/run-custom`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ code, stdin }),
+  });
+  if (!res.ok) {
+    let detail = "Could not run custom code.";
     try {
       const errData = await res.json();
       detail = errData.detail || errData.message || detail;

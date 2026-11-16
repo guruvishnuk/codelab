@@ -32,6 +32,17 @@ class RunRequest(BaseModel):
     code: str = Field(..., description="Python source code submitted by learner to execute")
 
 
+class CustomRunRequest(BaseModel):
+    code: str = Field(..., description="Python source code to execute in custom sandbox")
+    stdin: str = Field(default="", description="Arbitrary standard input passed to the program")
+
+
+class CustomRunResponse(BaseModel):
+    stdout: str = Field(..., description="Standard output captured from program execution")
+    stderr: str = Field("", description="Standard error or exception traceback if execution failed")
+    execution_time_ms: int = Field(0, description="Measured execution duration in milliseconds")
+
+
 class TestResult(BaseModel):
     passed: bool = Field(..., description="Whether the test case passed successfully")
     input: str = Field(..., description="Standard input passed to program")
