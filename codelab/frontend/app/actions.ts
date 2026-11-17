@@ -1,6 +1,6 @@
 "use server";
 
-import { runCode, runCustomCode } from "@/lib/api";
+import { runCode, runCustomCode, getExerciseSubmissions } from "@/lib/api";
 import { cookies } from "next/headers";
 import { signOut } from "@/auth";
 
@@ -33,6 +33,18 @@ export async function runCustomCodeAction(code: string, stdin: string) {
       stderr: err?.message || "Failed to execute custom code against backend.",
       execution_time_ms: 0,
       error: err?.message || "Failed to execute custom code against backend.",
+    };
+  }
+}
+
+export async function getExerciseSubmissionsAction(exerciseId: number) {
+  try {
+    const res = await getExerciseSubmissions(exerciseId);
+    return { submissions: res, error: undefined };
+  } catch (err: any) {
+    return {
+      submissions: [],
+      error: err?.message || "Failed to load submission history.",
     };
   }
 }

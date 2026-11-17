@@ -9,6 +9,7 @@ from ..schemas import (
     ExerciseDetail,
     RunRequest,
     RunResponse,
+    SubmissionItem,
     TestResult,
 )
 from ..runner import run_python
@@ -134,4 +135,33 @@ def run_exercise(
         results=results,
         xp_earned=xp_earned,
         is_first_solve=is_first_solve,
+    )
+
+
+@router.get(
+    "/{exercise_id}/submissions",
+    response_model=list[SubmissionItem],
+    summary="Get user submission history for an exercise",
+    description="Retrieve past code submissions and evaluation status for the authenticated user on this exercise.",
+)
+def get_exercise_submissions(
+    exercise_id: int,
+    db: Session = Depends(get_db),
+    current_user: User | None = Depends(get_optional_current_user),
+):
+    """Retrieve up to 20 past submissions for the current user and exercise, newest first."""
+    if not current_user:
+        return []
+    ex = db.get(Exercise, exercise_id)
+    if not ex:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Exercise not found")
+    return (
+        db.query(Submission)
+        .filter(
+            Submission.exercise_id == exercise_id,
+            Submission.user_id == current_user.id,
+        )
+        .order_by(Submission.created_at.desc())
+        .limit(20)
+        .all()
     )

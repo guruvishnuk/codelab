@@ -167,3 +167,37 @@ def test_run_custom_code_runtime_error(client):
     assert res.status_code == 200
     data = res.json()
     assert "ZeroDivisionError" in data["stderr"]
+
+
+def test_get_exercise_submissions_unauthenticated(client):
+    res = client.get("/api/exercises/1/submissions")
+    assert res.status_code == 200
+    assert res.json() == []
+
+
+def test_get_exercise_submissions_authenticated(client, auth_headers):
+    # Fetch first exercise
+    topic_res = client.get("/api/topics/python-basics")
+    ex_id = topic_res.json()["exercises"][0]["id"]
+
+    # Submit a run
+    client.post(
+        f"/api/exercises/{ex_id}/run",
+        json={"code": "print('hello')"},
+        headers=auth_headers,
+    )
+
+    # Fetch submissions
+    res = client.get(f"/api/exercises/{ex_id}/submissions", headers=auth_headers)
+    assert res.status_code == 200
+    subs = res.json()
+    assert len(subs) >= 1
+    assert subs[0]["exercise_id"] == ex_id
+    assert "code" in subs[0]
+    assert "passed" in subs[0]
+    assert "created_at" in subs[0]
+
+
+def test_get_exercise_submissions_not_found(client, auth_headers):
+    res = client.get("/api/exercises/999999/submissions", headers=auth_headers)
+    assert res.status_code == 404

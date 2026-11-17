@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -56,6 +57,15 @@ class RunResponse(BaseModel):
     results: list[TestResult] = Field(..., description="Detailed per-test-case results")
     xp_earned: int = Field(0, description="XP gained on first successful solve")
     is_first_solve: bool = Field(False, description="Whether this is the first time the user solved this")
+
+
+class SubmissionItem(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int = Field(..., description="Unique submission identifier")
+    exercise_id: int = Field(..., description="Associated exercise identifier")
+    code: str = Field(..., description="Python source code submitted by learner")
+    passed: bool = Field(..., description="Whether the submission passed all test cases")
+    created_at: datetime = Field(..., description="Submission creation timestamp")
 
 
 class DashboardExercise(BaseModel):

@@ -41,6 +41,7 @@
 - ⚡ **Gamification & Progression**: Full XP rewards engine, active daily streak tracker, level rank progression (Apprentice to Master), and unlockable achievement badges.
 - 🤖 **Socratic AI Mentor**: 3-stage progressive hint system (Concept $\rightarrow$ Logic $\rightarrow$ Code Skeleton) guiding learners toward solutions without spoiling answers.
 - 🧪 **Automated Test Evaluation**: User code executes securely against structured test cases (inputs and expected outputs) with timeout protection and test badges.
+- 📜 **Submission History & Versioning**: Complete chronological log of previous attempts with one-click code restoration and live Git-style line diffing.
 - 🔒 **Viewport-Locked Cyberpunk Auth**: Custom OAuth 2.0 sign-in page matching the 3D dark theme for **Google** and **GitHub** with zero-scroll responsive mobile design.
 - 🛡️ **Zero-Downtime Fallback Resilience**: Built-in curriculum and profile fallback caching that guarantees instant rendering even during server cold starts.
 - 📊 **Learner Dashboard**: Solved exercises, XP counters, and milestone achievement progress persisted across devices.
@@ -136,6 +137,8 @@ flowchart TD
 | `GET` | `/api/topics/{slug}` | Detailed notes and exercise checklist for a topic | Optional |
 | `GET` | `/api/exercises/{id}` | Exercise prompt, starter code, and next exercise reference | No |
 | `POST` | `/api/exercises/{id}/run` | Execute Python code against test cases in sandbox | Optional |
+| `POST` | `/api/exercises/run-custom` | Execute Python code with custom stdin in sandbox | No |
+| `GET` | `/api/exercises/{id}/submissions` | Retrieve past submission history and evaluation status | Optional |
 | `GET` | `/api/search?q={query}` | Search topics and exercises by keyword query | No |
 | `GET` | `/api/users/me/dashboard` | User XP, active streaks, level rank, and unlocked badges | Yes |
 | `POST` | `/api/admin/topics/{id}/exercises` | Admin route to append new exercise to curriculum | Yes (Admin) |

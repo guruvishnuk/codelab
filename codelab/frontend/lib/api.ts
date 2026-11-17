@@ -68,6 +68,14 @@ export type CustomRunResponse = {
   execution_time_ms: number;
 };
 
+export type SubmissionItem = {
+  id: number;
+  exercise_id: number;
+  code: string;
+  passed: boolean;
+  created_at: string;
+};
+
 /**
  * Generic fetch wrapper with auth header injection and error handling.
  */
@@ -140,6 +148,14 @@ export async function runCustomCode(code: string, stdin: string): Promise<Custom
   }
   return res.json();
 }
+
+/**
+ * Fetch past code submissions for an exercise for the currently logged in user.
+ */
+export const getExerciseSubmissions = (
+  exerciseId: number | string
+): Promise<SubmissionItem[]> =>
+  get<SubmissionItem[]>(`/api/exercises/${exerciseId}/submissions`);
 
 export type DashboardExercise = {
   id: number;
