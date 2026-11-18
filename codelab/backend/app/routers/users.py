@@ -1,7 +1,9 @@
+import os
 from datetime import datetime, timezone, timedelta
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, BackgroundTasks, Depends
 from sqlalchemy.orm import Session
 from ..database import get_db
+from ..email_service import is_smtp_configured, send_welcome_email
 from ..models import Exercise, Submission, User
 from ..schemas import (
     DashboardResponse,
@@ -9,6 +11,7 @@ from ..schemas import (
     DashboardExercise,
     LevelInfo,
     Badge,
+    WelcomeEmailResponse,
 )
 from ..auth import get_current_user
 
@@ -164,4 +167,52 @@ def get_dashboard(
             badges=badges,
         ),
         recent_solved=recent_solved,
+    )
+
+
+@router.post(
+    "/me/welcome",
+    response_model=WelcomeEmailResponse,
+    summary="Trigger Welcome to CodeLab email on login",
+    description=(
+        "Sends a Welcome to CodeLab email to the authenticated user in the background. "
+        "By default sent once per user on first login (set WELCOME_EMAIL_ON_EVERY_LOGIN=true to send on every login)."
+    ),
+)
+def trigger_welcome_email(
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Queue a welcome email for the logged-in user without blocking the login flow."""
+    send_every_login = os.getenv("WELCOME_EMAIL_ON_EVERY_LOGIN", "false").strip().lower() == "true"
+
+    if current_user.welcome_email_sent and not send_every_login:
+        return WelcomeEmailResponse(
+            sent=False,
+            already_sent=True,
+            mode="skipped",
+            message="Welcome email was already sent to this user.",
+        )
+
+    was_already_sent = bool(current_user.welcome_email_sent)
+    if not current_user.welcome_email_sent:
+        current_user.welcome_email_sent = True
+        db.add(current_user)
+        db.commit()
+        db.refresh(current_user)
+
+    background_tasks.add_task(
+        send_welcome_email,
+        current_user.email,
+        current_user.name,
+        current_user.provider,
+    )
+
+    delivery_mode = "smtp" if is_smtp_configured() else "console"
+    return WelcomeEmailResponse(
+        sent=True,
+        already_sent=was_already_sent,
+        mode=delivery_mode,
+        message=f"Welcome email queued for {current_user.email}.",
     )

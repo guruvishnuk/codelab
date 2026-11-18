@@ -44,6 +44,7 @@ class User(Base):
     avatar_url: Mapped[str] = mapped_column(String(1024), default="")
     provider: Mapped[str] = mapped_column(String(50))  # e.g., 'google' or 'github'
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
+    welcome_email_sent: Mapped[bool] = mapped_column(Boolean, default=False)
 
     submissions: Mapped[list["Submission"]] = relationship(back_populates="user")
 

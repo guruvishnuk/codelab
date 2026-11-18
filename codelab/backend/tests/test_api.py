@@ -1,13 +1,19 @@
+import uuid
+from unittest.mock import MagicMock, patch
 import pytest
 import jwt
 from fastapi.testclient import TestClient
 from app.main import app
-from app.database import SessionLocal
+from app.database import Base, engine, SessionLocal, ensure_schema_columns
+from app.models import User
 from app.seed import seed
 from app.auth import SECRET_KEY, ALGORITHM
+from app.email_service import build_welcome_email, send_welcome_email
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_database():
+    Base.metadata.create_all(bind=engine)
+    ensure_schema_columns()
     with SessionLocal() as db:
         seed(db)
 
@@ -201,3 +207,117 @@ def test_get_exercise_submissions_authenticated(client, auth_headers):
 def test_get_exercise_submissions_not_found(client, auth_headers):
     res = client.get("/api/exercises/999999/submissions", headers=auth_headers)
     assert res.status_code == 404
+
+
+def test_welcome_email_unauthenticated(client):
+    res = client.post("/api/users/me/welcome")
+    assert res.status_code == 401
+
+
+def test_welcome_email_sent_once_and_skipped_on_repeat(client, monkeypatch):
+    monkeypatch.delenv("WELCOME_EMAIL_ON_EVERY_LOGIN", raising=False)
+    unique_email = f"welcome-{uuid.uuid4().hex[:8]}@codelab.dev"
+    token = jwt.encode(
+        {
+            "email": unique_email,
+            "name": "Ada Lovelace",
+            "picture": "",
+            "provider": "google",
+        },
+        SECRET_KEY,
+        algorithm=ALGORITHM,
+    )
+    headers = {"Authorization": f"Bearer {token}"}
+
+    sent_calls = []
+    monkeypatch.setattr(
+        "app.routers.users.send_welcome_email",
+        lambda to_email, name, provider: sent_calls.append((to_email, name, provider)),
+    )
+
+    try:
+        # First login: should queue welcome email and mark user as welcomed
+        res1 = client.post("/api/users/me/welcome", headers=headers)
+        assert res1.status_code == 200
+        body1 = res1.json()
+        assert body1["sent"] is True
+        assert body1["already_sent"] is False
+        assert sent_calls == [(unique_email, "Ada Lovelace", "google")]
+
+        # Second login: should skip duplicate email
+        res2 = client.post("/api/users/me/welcome", headers=headers)
+        assert res2.status_code == 200
+        body2 = res2.json()
+        assert body2["sent"] is False
+        assert body2["already_sent"] is True
+        assert body2["mode"] == "skipped"
+        assert len(sent_calls) == 1
+
+        # With WELCOME_EMAIL_ON_EVERY_LOGIN=true: should send again
+        monkeypatch.setenv("WELCOME_EMAIL_ON_EVERY_LOGIN", "true")
+        res3 = client.post("/api/users/me/welcome", headers=headers)
+        assert res3.status_code == 200
+        body3 = res3.json()
+        assert body3["sent"] is True
+        assert body3["already_sent"] is True
+        assert len(sent_calls) == 2
+    finally:
+        with SessionLocal() as db:
+            db.query(User).filter(User.email == unique_email).delete()
+            db.commit()
+
+
+def test_build_welcome_email_content_and_html_escaping(monkeypatch):
+    monkeypatch.setenv("APP_URL", "https://codelab-amber.vercel.app")
+    msg = build_welcome_email(
+        to_email="learner@example.com",
+        name="Guru <script>alert(1)</script>",
+        provider="github",
+    )
+    assert msg["To"] == "learner@example.com"
+    assert "Welcome to CodeLab" in msg["Subject"]
+
+    parts = msg.get_payload()
+    assert len(parts) == 2
+    plain_body = parts[0].get_payload(decode=True).decode("utf-8")
+    html_body = parts[1].get_payload(decode=True).decode("utf-8")
+
+    assert "Welcome to CodeLab" in plain_body
+    assert "https://codelab-amber.vercel.app/topics/python-basics" in plain_body
+    assert "&lt;script&gt;alert(1)&lt;/script&gt;" in html_body
+    assert "<script>" not in html_body
+    assert "Github" in html_body
+
+
+def test_send_welcome_email_console_fallback(monkeypatch):
+    monkeypatch.delenv("SMTP_HOST", raising=False)
+    monkeypatch.delenv("SMTP_USER", raising=False)
+    monkeypatch.delenv("SMTP_PASSWORD", raising=False)
+
+    result = send_welcome_email("dev@codelab.dev", "Dev User", "google")
+    assert result["delivered"] is True
+    assert result["mode"] == "console"
+    assert result["recipient"] == "dev@codelab.dev"
+
+
+def test_send_welcome_email_via_smtp_starttls(monkeypatch):
+    monkeypatch.setenv("SMTP_HOST", "smtp.example.com")
+    monkeypatch.setenv("SMTP_PORT", "587")
+    monkeypatch.setenv("SMTP_USE_SSL", "false")
+    monkeypatch.setenv("SMTP_USER", "sender@example.com")
+    monkeypatch.setenv("SMTP_PASSWORD", "app-secret-password")
+
+    mock_smtp_instance = MagicMock()
+    mock_smtp_cm = MagicMock()
+    mock_smtp_cm.__enter__.return_value = mock_smtp_instance
+    mock_smtp_cm.__exit__.return_value = False
+
+    with patch("app.email_service.smtplib.SMTP", return_value=mock_smtp_cm) as mock_smtp:
+        result = send_welcome_email("user@example.com", "Alice", "google")
+
+    assert result["delivered"] is True
+    assert result["mode"] == "smtp"
+    mock_smtp.assert_called_once_with("smtp.example.com", 587, timeout=10)
+    mock_smtp_instance.starttls.assert_called_once()
+    mock_smtp_instance.login.assert_called_once_with("sender@example.com", "app-secret-password")
+    mock_smtp_instance.send_message.assert_called_once()

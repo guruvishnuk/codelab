@@ -1,7 +1,7 @@
 import os
 from typing import Generator
 from dotenv import load_dotenv
-from sqlalchemy import create_engine, event
+from sqlalchemy import create_engine, event, inspect, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase, Session
 
@@ -34,6 +34,18 @@ SessionLocal = sessionmaker(bind=engine, autoflush=False)
 
 class Base(DeclarativeBase):
     pass
+
+
+def ensure_schema_columns() -> None:
+    """Safely add newly introduced columns to existing databases (SQLite & PostgreSQL)."""
+    inspector = inspect(engine)
+    if "users" in inspector.get_table_names():
+        existing_cols = {col["name"] for col in inspector.get_columns("users")}
+        if "welcome_email_sent" not in existing_cols:
+            with engine.begin() as conn:
+                conn.execute(
+                    text("ALTER TABLE users ADD COLUMN welcome_email_sent BOOLEAN NOT NULL DEFAULT FALSE")
+                )
 
 
 def get_db() -> Generator[Session, None, None]:

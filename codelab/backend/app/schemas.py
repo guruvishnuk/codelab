@@ -105,3 +105,10 @@ class DashboardStats(BaseModel):
 class DashboardResponse(BaseModel):
     stats: DashboardStats = Field(..., description="Aggregated user statistics and progression")
     recent_solved: list[DashboardExercise] = Field(default_factory=list, description="Recently solved exercises")
+
+
+class WelcomeEmailResponse(BaseModel):
+    sent: bool = Field(..., description="Whether a welcome email was queued/sent on this request")
+    already_sent: bool = Field(..., description="Whether the user had already received a welcome email previously")
+    mode: str = Field(..., description="Delivery mode used: 'smtp', 'console', or 'skipped'")
+    message: str = Field(..., description="Human-readable status summary")

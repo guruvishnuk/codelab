@@ -43,6 +43,7 @@
 - 🧪 **Automated Test Evaluation**: User code executes securely against structured test cases (inputs and expected outputs) with timeout protection and test badges.
 - 📜 **Submission History & Versioning**: Complete chronological log of previous attempts with one-click code restoration and live Git-style line diffing.
 - 🔒 **Viewport-Locked Cyberpunk Auth**: Custom OAuth 2.0 sign-in page matching the 3D dark theme for **Google** and **GitHub** with zero-scroll responsive mobile design.
+- 📧 **Automated Welcome Emails**: Instant branded HTML + plain-text "Welcome to CodeLab" email sent via SMTP (with zero-config console preview fallback) when a learner signs in.
 - 🛡️ **Zero-Downtime Fallback Resilience**: Built-in curriculum and profile fallback caching that guarantees instant rendering even during server cold starts.
 - 📊 **Learner Dashboard**: Solved exercises, XP counters, and milestone achievement progress persisted across devices.
 - 🌗 **Dark & Light Mode**: Flawless adaptive UI with high-contrast syntax themes and persistent preference toggle.
@@ -141,6 +142,7 @@ flowchart TD
 | `GET` | `/api/exercises/{id}/submissions` | Retrieve past submission history and evaluation status | Optional |
 | `GET` | `/api/search?q={query}` | Search topics and exercises by keyword query | No |
 | `GET` | `/api/users/me/dashboard` | User XP, active streaks, level rank, and unlocked badges | Yes |
+| `POST` | `/api/users/me/welcome` | Send branded "Welcome to CodeLab" email on login (idempotent) | Yes |
 | `POST` | `/api/admin/topics/{id}/exercises` | Admin route to append new exercise to curriculum | Yes (Admin) |
 
 ---
@@ -237,6 +239,7 @@ npm run lint
    - `DATABASE_URL`: *(Your Supabase PostgreSQL URI)*
    - `FRONTEND_ORIGIN`: `https://codelab-amber.vercel.app`
    - `USE_DOCKER_SANDBOX`: `false`
+   - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `EMAIL_FROM`, `APP_URL`: *(Optional — enables real SMTP Welcome emails; defaults to console preview mode when omitted)*
 
 ### 3. Frontend (Vercel)
 1. Import repository into [Vercel](https://vercel.com).

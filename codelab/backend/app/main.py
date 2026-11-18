@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .database import Base, engine, SessionLocal
+from .database import Base, engine, SessionLocal, ensure_schema_columns
 from .seed import seed
 from .routers import exercises, topics, users, admin, search
 
@@ -11,6 +11,7 @@ from .routers import exercises, topics, users, admin, search
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
+    ensure_schema_columns()
     with SessionLocal() as db:
         seed(db)
     yield
